@@ -19,7 +19,7 @@ export function Header() {
         </Link>
 
         <Link to="/settings">
-          <Button variant="ghost" size="icon" className="rounded-xl text-[#8D6E63] hover:text-[#3E2723] hover:bg-[#FFF5EB]">
+          <Button variant="ghost" size="icon" className="rounded-xl text-[#8D6E63] hover:text-[#3E2723] hover:bg-[#FFF5EB] cursor-pointer">
             <Settings className="h-5 w-5" />
           </Button>
         </Link>
