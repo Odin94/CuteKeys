@@ -60,13 +60,14 @@ export const SetSelectionPage = () => {
       </div>
 
       <div className="flex flex-col gap-4 pb-28">
-        {app.sets.map((set) => (
+        {app.sets.map((set, i) => (
           <HotkeySetCard
             key={set.id}
             set={set}
             selected={selectedSetIds.has(set.id)}
             onToggle={() => toggleSet(set.id)}
             accentColor={app.accentColor}
+            index={i}
           />
         ))}
       </div>

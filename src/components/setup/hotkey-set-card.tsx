@@ -5,17 +5,23 @@ import { toDisplayString } from '@/lib/hotkey-utils'
 import { cn } from '@/lib/cn'
 import { useState } from 'react'
 
-interface HotkeySetCardProps {
+type HotkeySetCardProps = {
   set: HotkeySet
   selected: boolean
   onToggle: () => void
   accentColor: string
+  index?: number
 }
 
-export function HotkeySetCard({ set, selected, onToggle, accentColor }: HotkeySetCardProps) {
+export const HotkeySetCard = ({ set, selected, onToggle, accentColor, index = 0 }: HotkeySetCardProps) => {
   const [expanded, setExpanded] = useState(false)
 
   return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.1 + 0.3, type: 'spring', bounce: 0.3 }}
+    >
     <motion.div
       layout
       whileHover={{ y: -2 }}
@@ -97,6 +103,7 @@ export function HotkeySetCard({ set, selected, onToggle, accentColor }: HotkeySe
           </motion.div>
         )}
       </AnimatePresence>
+    </motion.div>
     </motion.div>
   )
 }
