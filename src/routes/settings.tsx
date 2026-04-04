@@ -1,0 +1,137 @@
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { useState } from 'react'
+import { motion } from 'motion/react'
+import { ArrowLeft, Trash2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { getSettings, saveSettings, clearAllData } from '@/lib/storage'
+import type { UserSettings } from '@/types/stats'
+
+export const Route = createFileRoute('/settings')({
+  component: SettingsPage,
+})
+
+function SettingsPage() {
+  const [settings, setSettings] = useState<UserSettings>(getSettings)
+  const [cleared, setCleared] = useState(false)
+
+  function update<K extends keyof UserSettings>(key: K, value: UserSettings[K]) {
+    const next = { ...settings, [key]: value }
+    setSettings(next)
+    saveSettings(next)
+  }
+
+  function handleClear() {
+    if (confirm('Clear ALL CuteKey data? This cannot be undone.')) {
+      clearAllData()
+      setCleared(true)
+    }
+  }
+
+  return (
+    <div className="max-w-lg mx-auto">
+      <div className="flex items-center gap-3 mb-8">
+        <Link to="/">
+          <Button variant="ghost" size="icon" className="rounded-xl text-[#8D6E63]">
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+        </Link>
+        <h1 className="font-display font-black text-2xl text-[#3E2723]">Settings</h1>
+      </div>
+
+      <div className="flex flex-col gap-4">
+        {/* Countdown */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-2xl border border-[#F5E6D8] p-5"
+        >
+          <label className="font-semibold text-[#3E2723] block mb-1">Countdown Duration</label>
+          <p className="text-sm text-[#8D6E63] mb-3">How many seconds to guess each hotkey</p>
+          <div className="flex items-center gap-4">
+            <input
+              type="range"
+              min={1}
+              max={10}
+              value={settings.countdownSeconds}
+              onChange={(e) => update('countdownSeconds', Number(e.target.value))}
+              className="flex-1 accent-[#F43F5E]"
+            />
+            <span className="font-display font-bold text-lg text-[#F43F5E] w-8 text-center">
+              {settings.countdownSeconds}s
+            </span>
+          </div>
+        </motion.div>
+
+        {/* Sound */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="bg-white rounded-2xl border border-[#F5E6D8] p-5 flex items-center justify-between"
+        >
+          <div>
+            <label className="font-semibold text-[#3E2723] block">Sound Effects</label>
+            <p className="text-sm text-[#8D6E63]">Play sounds on success and timeout</p>
+          </div>
+          <button
+            onClick={() => update('soundEnabled', !settings.soundEnabled)}
+            className={`w-12 h-6 rounded-full transition-colors relative ${
+              settings.soundEnabled ? 'bg-[#F43F5E]' : 'bg-[#F5E6D8]'
+            }`}
+          >
+            <span
+              className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${
+                settings.soundEnabled ? 'translate-x-7' : 'translate-x-1'
+              }`}
+            />
+          </button>
+        </motion.div>
+
+        {/* Modifier display */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="bg-white rounded-2xl border border-[#F5E6D8] p-5"
+        >
+          <label className="font-semibold text-[#3E2723] block mb-1">Modifier Key Display</label>
+          <p className="text-sm text-[#8D6E63] mb-3">How to show the primary modifier key</p>
+          <div className="flex gap-2">
+            {(['auto', 'ctrl', 'cmd'] as const).map((opt) => (
+              <button
+                key={opt}
+                onClick={() => update('modifierDisplay', opt)}
+                className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-colors ${
+                  settings.modifierDisplay === opt
+                    ? 'bg-[#F43F5E] text-white'
+                    : 'bg-[#FFF5EB] text-[#8D6E63] hover:bg-[#FFF1F2]'
+                }`}
+              >
+                {opt === 'auto' ? 'Auto' : opt === 'ctrl' ? 'Ctrl' : '⌘ Cmd'}
+              </button>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Danger zone */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="bg-white rounded-2xl border border-red-100 p-5"
+        >
+          <label className="font-semibold text-[#3E2723] block mb-1">Danger Zone</label>
+          <p className="text-sm text-[#8D6E63] mb-3">Permanently delete all your stats and leaderboard data</p>
+          <Button
+            variant="outline"
+            onClick={handleClear}
+            className="gap-2 border-red-200 text-red-500 hover:bg-red-50"
+          >
+            <Trash2 className="h-4 w-4" />
+            {cleared ? 'Data cleared!' : 'Clear All Data'}
+          </Button>
+        </motion.div>
+      </div>
+    </div>
+  )
+}
