@@ -1,26 +1,21 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useNavigate, useParams, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { ArrowLeft, Play } from 'lucide-react'
-import { Link } from '@tanstack/react-router'
 import { appsById } from '@/data/apps'
 import { HotkeySetCard } from '@/components/setup/hotkey-set-card'
 import { Button } from '@/components/ui/button'
 import { getAppStats } from '@/lib/storage'
 
-export const Route = createFileRoute('/app/$appId/')({
-  component: SetSelectionPage,
-})
-
-function SetSelectionPage() {
-  const { appId } = Route.useParams()
+export const SetSelectionPage = () => {
+  const { appId } = useParams({ from: '/app/$appId/' })
   const app = appsById[appId]!
   const navigate = useNavigate()
   const stats = getAppStats(appId)
 
   const [selectedSetIds, setSelectedSetIds] = useState<Set<string>>(new Set())
 
-  function toggleSet(setId: string) {
+  const toggleSet = (setId: string) => {
     setSelectedSetIds((prev) => {
       const next = new Set(prev)
       if (next.has(setId)) next.delete(setId)
@@ -36,14 +31,13 @@ function SetSelectionPage() {
       return sum + active.length
     }, 0)
 
-  function startTraining() {
+  const startTraining = () => {
     const sets = Array.from(selectedSetIds).join(',')
     navigate({ to: '/app/$appId/train', params: { appId }, search: { sets } })
   }
 
   return (
     <div className="max-w-2xl mx-auto">
-      {/* Back + title */}
       <div className="flex items-center gap-3 mb-8">
         <Link to="/">
           <Button variant="ghost" size="icon" className="rounded-xl text-[#8D6E63]">
@@ -63,7 +57,6 @@ function SetSelectionPage() {
         </div>
       </div>
 
-      {/* Set cards */}
       <div className="flex flex-col gap-4 pb-28">
         {app.sets.map((set) => (
           <HotkeySetCard
@@ -76,9 +69,8 @@ function SetSelectionPage() {
         ))}
       </div>
 
-      {/* Floating start bar */}
       <AnimatePresence>
-        {selectedSetIds.size > 0 && (
+        {selectedSetIds.size > 0 ? (
           <motion.div
             initial={{ y: 80, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -97,7 +89,7 @@ function SetSelectionPage() {
               </span>
             </button>
           </motion.div>
-        )}
+        ) : null}
       </AnimatePresence>
     </div>
   )

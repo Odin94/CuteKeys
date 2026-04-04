@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { motion } from 'motion/react'
 import { ArrowLeft, Trash2 } from 'lucide-react'
@@ -6,21 +6,17 @@ import { Button } from '@/components/ui/button'
 import { getSettings, saveSettings, clearAllData } from '@/lib/storage'
 import type { UserSettings } from '@/types/stats'
 
-export const Route = createFileRoute('/settings')({
-  component: SettingsPage,
-})
-
-function SettingsPage() {
+export const SettingsPage = () => {
   const [settings, setSettings] = useState<UserSettings>(getSettings)
   const [cleared, setCleared] = useState(false)
 
-  function update<K extends keyof UserSettings>(key: K, value: UserSettings[K]) {
+  const update = <K extends keyof UserSettings>(key: K, value: UserSettings[K]) => {
     const next = { ...settings, [key]: value }
     setSettings(next)
     saveSettings(next)
   }
 
-  function handleClear() {
+  const handleClear = () => {
     if (confirm('Clear ALL CuteKey data? This cannot be undone.')) {
       clearAllData()
       setCleared(true)
@@ -39,7 +35,6 @@ function SettingsPage() {
       </div>
 
       <div className="flex flex-col gap-4">
-        {/* Countdown */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -62,7 +57,6 @@ function SettingsPage() {
           </div>
         </motion.div>
 
-        {/* Sound */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -89,7 +83,6 @@ function SettingsPage() {
           </motion.button>
         </motion.div>
 
-        {/* Modifier display */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -117,7 +110,6 @@ function SettingsPage() {
           </div>
         </motion.div>
 
-        {/* Danger zone */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}

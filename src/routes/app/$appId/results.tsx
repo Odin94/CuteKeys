@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { useParams, useNavigate, Link } from '@tanstack/react-router'
 import { appsById } from '@/data/apps'
 import { ScoreSummary } from '@/components/results/score-summary'
 import { HotkeyResultsList } from '@/components/results/hotkey-results-list'
@@ -9,16 +9,11 @@ import { RotateCcw, LayoutDashboard, ChevronLeft } from 'lucide-react'
 import { motion } from 'motion/react'
 import type { TrainingSessionState } from '@/types/session'
 
-export const Route = createFileRoute('/app/$appId/results')({
-  component: ResultsPage,
-})
-
-function ResultsPage() {
-  const { appId } = Route.useParams()
+export const ResultsPage = () => {
+  const { appId } = useParams({ from: '/app/$appId/results' })
   const navigate = useNavigate()
   const app = appsById[appId]!
 
-  // Get session from router state
   const historyState = window.history.state as { session?: TrainingSessionState; entryId?: string } | undefined
   const session = historyState?.session
   const entryId = historyState?.entryId
@@ -70,7 +65,6 @@ function ResultsPage() {
         </motion.div>
       </div>
 
-      {/* Action buttons */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { useParams, useNavigate, Link } from '@tanstack/react-router'
 import { motion } from 'motion/react'
 import { ArrowLeft, Zap } from 'lucide-react'
 import { appsById } from '@/data/apps'
@@ -6,26 +6,20 @@ import { useStats } from '@/hooks/use-stats'
 import { HotkeyStatsTable } from '@/components/dashboard/hotkey-stats-table'
 import { Button } from '@/components/ui/button'
 
-export const Route = createFileRoute('/app/$appId/dashboard')({
-  component: DashboardPage,
-})
-
-function DashboardPage() {
-  const { appId } = Route.useParams()
+export const DashboardPage = () => {
+  const { appId } = useParams({ from: '/app/$appId/dashboard' })
   const navigate = useNavigate()
   const app = appsById[appId]!
   const { stats, toggleExclude } = useStats(appId)
   const allHotkeys = app.sets.flatMap((s) => s.hotkeys)
 
-  // Find hotkeys with <70% accuracy and at least 1 attempt
   const weakHotkeys = allHotkeys.filter((h) => {
     const p = stats.hotkeyPerformance[h.id]
     if (!p || p.totalAttempts === 0 || p.excluded) return false
     return p.correctAttempts / p.totalAttempts < 0.7
   })
 
-  // Find which sets contain the weak hotkeys
-  function practiceWeakSpots() {
+  const practiceWeakSpots = () => {
     const weakIds = new Set(weakHotkeys.map((h) => h.id))
     const sets = app.sets.filter((s) => s.hotkeys.some((h) => weakIds.has(h.id)))
     const setIds = sets.map((s) => s.id).join(',')
@@ -38,7 +32,6 @@ function DashboardPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      {/* Header */}
       <div className="flex items-center gap-3 mb-8">
         <Link to="/app/$appId" params={{ appId }}>
           <Button variant="ghost" size="icon" className="rounded-xl text-[#8D6E63]">
@@ -51,7 +44,6 @@ function DashboardPage() {
         </div>
       </div>
 
-      {/* Summary stats */}
       <div className="grid grid-cols-3 gap-4 mb-6">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -83,8 +75,7 @@ function DashboardPage() {
         </motion.div>
       </div>
 
-      {/* Practice weak spots */}
-      {weakHotkeys.length > 0 && (
+      {weakHotkeys.length > 0 ? (
         <motion.div
           initial={{ opacity: 0, scale: 0.97 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -104,9 +95,8 @@ function DashboardPage() {
             Practice
           </button>
         </motion.div>
-      )}
+      ) : null}
 
-      {/* Per-set breakdown */}
       {app.sets.map((set) => (
         <motion.div
           key={set.id}

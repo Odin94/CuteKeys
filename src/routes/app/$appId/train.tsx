@@ -1,26 +1,19 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useParams, useSearch, useNavigate } from '@tanstack/react-router'
 import { appsById } from '@/data/apps'
 import { TrainingView } from '@/components/training/training-view'
 import type { TrainingSessionState } from '@/types/session'
-import { trainSearchSchema } from '@/types/schemas'
 import { updatePerformance, addLeaderboardEntry } from '@/lib/storage'
 import type { LeaderboardEntry } from '@/types/stats'
 
-export const Route = createFileRoute('/app/$appId/train')({
-  validateSearch: trainSearchSchema,
-  component: TrainPage,
-})
-
-function TrainPage() {
-  const { appId } = Route.useParams()
-  const { sets } = Route.useSearch()
+export const TrainPage = () => {
+  const { appId } = useParams({ from: '/app/$appId/train' })
+  const { sets } = useSearch({ from: '/app/$appId/train' })
   const navigate = useNavigate()
   const app = appsById[appId]!
 
   const selectedSetIds = sets ? sets.split(',').filter(Boolean) : app.sets.map((s) => s.id)
 
-  function handleFinish(state: TrainingSessionState) {
-    // Persist stats
+  const handleFinish = (state: TrainingSessionState) => {
     updatePerformance(appId, state.attempts)
 
     const correct = state.attempts.filter((a) => a.correct).length

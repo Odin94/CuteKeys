@@ -4,3 +4,4 @@ oprocs/
 .claude/
 .docs/
 dist/
+.tanstack/
