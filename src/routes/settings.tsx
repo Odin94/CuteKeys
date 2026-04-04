@@ -5,6 +5,7 @@ import { ArrowLeft, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { getSettings, saveSettings, clearAllData } from '@/lib/storage'
 import type { UserSettings } from '@/types/stats'
+import { PageWrapper } from '@/components/layout/page-wrapper'
 
 export const SettingsPage = () => {
   const [settings, setSettings] = useState<UserSettings>(getSettings)
@@ -24,6 +25,7 @@ export const SettingsPage = () => {
   }
 
   return (
+    <PageWrapper>
     <div className="max-w-lg mx-auto">
       <div className="flex items-center gap-3 mb-8">
         <Link to="/">
@@ -131,5 +133,6 @@ export const SettingsPage = () => {
         </motion.div>
       </div>
     </div>
+    </PageWrapper>
   )
 }

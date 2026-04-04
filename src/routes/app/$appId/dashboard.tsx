@@ -5,6 +5,7 @@ import { appsById } from '@/data/apps'
 import { useStats } from '@/hooks/use-stats'
 import { HotkeyStatsTable } from '@/components/dashboard/hotkey-stats-table'
 import { Button } from '@/components/ui/button'
+import { PageWrapper } from '@/components/layout/page-wrapper'
 
 export const DashboardPage = () => {
   const { appId } = useParams({ from: '/app/$appId/dashboard' })
@@ -31,6 +32,7 @@ export const DashboardPage = () => {
   const overallAccuracy = totalAttempts > 0 ? totalCorrect / totalAttempts : null
 
   return (
+    <PageWrapper>
     <div className="max-w-2xl mx-auto">
       <div className="flex items-center gap-3 mb-8">
         <Link to="/app/$appId" params={{ appId }}>
@@ -113,5 +115,6 @@ export const DashboardPage = () => {
         </motion.div>
       ))}
     </div>
+    </PageWrapper>
   )
 }

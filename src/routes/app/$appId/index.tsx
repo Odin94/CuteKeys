@@ -6,6 +6,7 @@ import { appsById } from '@/data/apps'
 import { HotkeySetCard } from '@/components/setup/hotkey-set-card'
 import { Button } from '@/components/ui/button'
 import { getAppStats } from '@/lib/storage'
+import { PageWrapper } from '@/components/layout/page-wrapper'
 
 export const SetSelectionPage = () => {
   const { appId } = useParams({ from: '/app/$appId/' })
@@ -37,6 +38,7 @@ export const SetSelectionPage = () => {
   }
 
   return (
+    <PageWrapper>
     <div className="max-w-2xl mx-auto">
       <div className="flex items-center gap-3 mb-8">
         <Link to="/">
@@ -92,5 +94,6 @@ export const SetSelectionPage = () => {
         ) : null}
       </AnimatePresence>
     </div>
+    </PageWrapper>
   )
 }

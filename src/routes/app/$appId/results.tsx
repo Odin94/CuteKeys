@@ -8,6 +8,7 @@ import { getAppStats } from '@/lib/storage'
 import { RotateCcw, LayoutDashboard, ChevronLeft } from 'lucide-react'
 import { motion } from 'motion/react'
 import type { TrainingSessionState } from '@/types/session'
+import { PageWrapper } from '@/components/layout/page-wrapper'
 
 export const ResultsPage = () => {
   const { appId } = useParams({ from: '/app/$appId/results' })
@@ -22,18 +23,21 @@ export const ResultsPage = () => {
 
   if (!session) {
     return (
-      <div className="text-center py-20">
-        <p className="text-[#8D6E63] mb-4">No session data found.</p>
-        <Link to="/app/$appId" params={{ appId }}>
-          <Button>Back to {app.name}</Button>
-        </Link>
-      </div>
+      <PageWrapper>
+        <div className="text-center py-20">
+          <p className="text-[#8D6E63] mb-4">No session data found.</p>
+          <Link to="/app/$appId" params={{ appId }}>
+            <Button>Back to {app.name}</Button>
+          </Link>
+        </div>
+      </PageWrapper>
     )
   }
 
   const allHotkeys = app.sets.flatMap((s) => s.hotkeys)
 
   return (
+    <PageWrapper>
     <div className="max-w-2xl mx-auto">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -98,5 +102,6 @@ export const ResultsPage = () => {
         </Link>
       </motion.div>
     </div>
+    </PageWrapper>
   )
 }

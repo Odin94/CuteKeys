@@ -4,6 +4,7 @@ import { TrainingView } from '@/components/training/training-view'
 import type { TrainingSessionState } from '@/types/session'
 import { updatePerformance, addLeaderboardEntry } from '@/lib/storage'
 import type { LeaderboardEntry } from '@/types/stats'
+import { PageWrapper } from '@/components/layout/page-wrapper'
 
 export const TrainPage = () => {
   const { appId } = useParams({ from: '/app/$appId/train' })
@@ -44,10 +45,12 @@ export const TrainPage = () => {
   }
 
   return (
-    <TrainingView
-      app={app}
-      selectedSetIds={selectedSetIds}
-      onFinish={handleFinish}
-    />
+    <PageWrapper>
+      <TrainingView
+        app={app}
+        selectedSetIds={selectedSetIds}
+        onFinish={handleFinish}
+      />
+    </PageWrapper>
   )
 }
