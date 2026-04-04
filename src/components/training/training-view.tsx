@@ -113,7 +113,7 @@ export function TrainingView({ app, selectedSetIds, onFinish }: TrainingViewProp
   if (!currentHotkey || state.queue.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-[#8D6E63]">Loading session…</p>
+        <p className="text-[#8D6E63] dark:text-[#B0BEC5]">Loading session…</p>
       </div>
     )
   }
@@ -138,7 +138,7 @@ export function TrainingView({ app, selectedSetIds, onFinish }: TrainingViewProp
       />
 
       {/* Prompt / feedback area */}
-      <div className="bg-white rounded-2xl border border-[#F5E6D8] p-6">
+      <div className="bg-white dark:bg-[#3A3550] rounded-2xl border border-[#F5E6D8] dark:border-[#5A5570] p-6">
         <AnimatePresence mode="wait">
           {state.phase === 'prompt' && (
             <motion.div
@@ -180,7 +180,7 @@ export function TrainingView({ app, selectedSetIds, onFinish }: TrainingViewProp
               className="text-center py-4"
             >
               <p className="text-[#22C55E] font-semibold text-lg">✓ That's the effect!</p>
-              <p className="text-[#8D6E63] text-sm mt-1">Next hotkey coming up…</p>
+              <p className="text-[#8D6E63] dark:text-[#B0BEC5] text-sm mt-1">Next hotkey coming up…</p>
             </motion.div>
           )}
         </AnimatePresence>

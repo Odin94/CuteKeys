@@ -36,13 +36,13 @@ export const DashboardPage = () => {
     <div className="max-w-2xl mx-auto">
       <div className="flex items-center gap-3 mb-8">
         <Link to="/app/$appId" params={{ appId }}>
-          <Button variant="ghost" size="icon" className="rounded-xl text-[#8D6E63]">
+          <Button variant="ghost" size="icon" className="rounded-xl text-[#8D6E63] dark:text-[#B0BEC5]">
             <ArrowLeft className="h-5 w-5" />
           </Button>
         </Link>
         <div>
-          <h1 className="font-display font-black text-2xl text-[#3E2723]">{app.name} Dashboard</h1>
-          <p className="text-[#8D6E63] text-sm">Your hotkey performance</p>
+          <h1 className="font-display font-black text-2xl text-[#3E2723] dark:text-[#F8F8F2]">{app.name} Dashboard</h1>
+          <p className="text-[#8D6E63] dark:text-[#B0BEC5] text-sm">Your hotkey performance</p>
         </div>
       </div>
 
@@ -50,30 +50,30 @@ export const DashboardPage = () => {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-xl border border-[#F5E6D8] p-4 text-center"
+          className="bg-white dark:bg-[#3A3550] rounded-xl border border-[#F5E6D8] dark:border-[#5A5570] p-4 text-center"
         >
-          <p className="font-display font-bold text-2xl text-[#3E2723]">{totalAttempts}</p>
-          <p className="text-xs text-[#8D6E63]">Total attempts</p>
+          <p className="font-display font-bold text-2xl text-[#3E2723] dark:text-[#F8F8F2]">{totalAttempts}</p>
+          <p className="text-xs text-[#8D6E63] dark:text-[#B0BEC5]">Total attempts</p>
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
-          className="bg-white rounded-xl border border-[#F5E6D8] p-4 text-center"
+          className="bg-white dark:bg-[#3A3550] rounded-xl border border-[#F5E6D8] dark:border-[#5A5570] p-4 text-center"
         >
-          <p className="font-display font-bold text-2xl text-[#22C55E]">
+          <p className="font-display font-bold text-2xl text-[#22C55E] dark:text-[#C2FFDF]">
             {overallAccuracy !== null ? `${Math.round(overallAccuracy * 100)}%` : '—'}
           </p>
-          <p className="text-xs text-[#8D6E63]">Overall accuracy</p>
+          <p className="text-xs text-[#8D6E63] dark:text-[#B0BEC5]">Overall accuracy</p>
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-xl border border-[#F5E6D8] p-4 text-center"
+          className="bg-white dark:bg-[#3A3550] rounded-xl border border-[#F5E6D8] dark:border-[#5A5570] p-4 text-center"
         >
-          <p className="font-display font-bold text-2xl text-[#F43F5E]">{weakHotkeys.length}</p>
-          <p className="text-xs text-[#8D6E63]">Need practice</p>
+          <p className="font-display font-bold text-2xl text-[#F43F5E] dark:text-[#FFB8D1]">{weakHotkeys.length}</p>
+          <p className="text-xs text-[#8D6E63] dark:text-[#B0BEC5]">Need practice</p>
         </motion.div>
       </div>
 
@@ -81,13 +81,13 @@ export const DashboardPage = () => {
         <motion.div
           initial={{ opacity: 0, scale: 0.97 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="bg-[#FFF1F2] border border-[#F43F5E]/20 rounded-xl p-4 mb-6 flex items-center justify-between"
+          className="bg-[#FFF1F2] dark:bg-[#4A3E56] border border-[#F43F5E]/20 rounded-xl p-4 mb-6 flex items-center justify-between"
         >
           <div>
-            <p className="font-semibold text-[#3E2723] text-sm">
+            <p className="font-semibold text-[#3E2723] dark:text-[#F8F8F2] text-sm">
               {weakHotkeys.length} hotkey{weakHotkeys.length > 1 ? 's' : ''} below 70% accuracy
             </p>
-            <p className="text-xs text-[#8D6E63]">Focus on these to improve your score</p>
+            <p className="text-xs text-[#8D6E63] dark:text-[#B0BEC5]">Focus on these to improve your score</p>
           </div>
           <button
             onClick={practiceWeakSpots}
@@ -106,7 +106,7 @@ export const DashboardPage = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-6"
         >
-          <h3 className="font-display font-bold text-[#3E2723] mb-3">{set.name}</h3>
+          <h3 className="font-display font-bold text-[#3E2723] dark:text-[#F8F8F2] mb-3">{set.name}</h3>
           <HotkeyStatsTable
             hotkeys={set.hotkeys}
             performance={stats.hotkeyPerformance}

@@ -1,17 +1,16 @@
 import { motion } from 'motion/react'
 
-interface CountdownRingProps {
-  progress: number // 1 = full, 0 = empty
+type CountdownRingProps = {
+  progress: number
   remainingMs: number
   size?: number
 }
 
-export function CountdownRing({ progress, remainingMs, size = 120 }: CountdownRingProps) {
+export const CountdownRing = ({ progress, remainingMs, size = 120 }: CountdownRingProps) => {
   const radius = (size - 16) / 2
   const circumference = 2 * Math.PI * radius
   const strokeDashoffset = circumference * (1 - progress)
 
-  // Color based on progress
   let color = '#22C55E'
   if (progress < 0.66) color = '#FB923C'
   if (progress < 0.33) color = '#F43F5E'
@@ -22,21 +21,15 @@ export function CountdownRing({ progress, remainingMs, size = 120 }: CountdownRi
 
   return (
     <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
-      <svg
-        width={size}
-        height={size}
-        className="-rotate-90"
-      >
-        {/* Background track */}
+      <svg width={size} height={size} className="-rotate-90">
         <circle
           cx={size / 2}
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke="#F5E6D8"
           strokeWidth={8}
+          className="stroke-[#F5E6D8] dark:stroke-[#5A5570]"
         />
-        {/* Progress arc */}
         <motion.circle
           cx={size / 2}
           cy={size / 2}
@@ -52,7 +45,6 @@ export function CountdownRing({ progress, remainingMs, size = 120 }: CountdownRi
         />
       </svg>
 
-      {/* Center number */}
       <motion.div
         key={seconds}
         initial={didTick ? { scale: 1.3, opacity: 0.7 } : false}

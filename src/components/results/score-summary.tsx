@@ -3,11 +3,11 @@ import { useEffect } from 'react'
 import { Target, Zap, Flame } from 'lucide-react'
 import type { TrainingSessionState } from '@/types/session'
 
-interface ScoreSummaryProps {
+type ScoreSummaryProps = {
   session: TrainingSessionState
 }
 
-export function ScoreSummary({ session }: ScoreSummaryProps) {
+export const ScoreSummary = ({ session }: ScoreSummaryProps) => {
   const correct = session.attempts.filter((a) => a.correct).length
   const accuracy = session.attempts.length > 0 ? correct / session.attempts.length : 0
   const avgTime =
@@ -37,32 +37,30 @@ export function ScoreSummary({ session }: ScoreSummaryProps) {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="font-display font-black text-6xl text-[#F43F5E] mb-1"
+        className="font-display font-black text-6xl text-[#F43F5E] dark:text-[#FFB8D1] mb-1"
       >
         <motion.span>{rounded}</motion.span>
       </motion.div>
-      <p className="text-[#8D6E63] font-semibold mb-6">points</p>
+      <p className="text-[#8D6E63] dark:text-[#B0BEC5] font-semibold mb-6">points</p>
 
       <div className="grid grid-cols-3 gap-4">
-        <Stat icon={<Target className="h-5 w-5 text-[#8B5CF6]" />} label="Accuracy" value={`${Math.round(accuracy * 100)}%`} />
+        <Stat icon={<Target className="h-5 w-5 text-[#8B5CF6] dark:text-[#C5A3FF]" />} label="Accuracy" value={`${Math.round(accuracy * 100)}%`} />
         <Stat icon={<Zap className="h-5 w-5 text-[#FB923C]" />} label="Avg. Speed" value={`${(avgTime / 1000).toFixed(1)}s`} />
-        <Stat icon={<Flame className="h-5 w-5 text-[#F43F5E]" />} label="Best Streak" value={`${session.bestStreak}x`} />
+        <Stat icon={<Flame className="h-5 w-5 text-[#F43F5E] dark:text-[#FFB8D1]" />} label="Best Streak" value={`${session.bestStreak}x`} />
       </div>
     </div>
   )
 }
 
-function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.4 }}
-      className="bg-[#FFF5EB] rounded-xl p-3"
-    >
-      <div className="flex justify-center mb-1">{icon}</div>
-      <div className="font-display font-bold text-lg text-[#3E2723]">{value}</div>
-      <div className="text-xs text-[#8D6E63]">{label}</div>
-    </motion.div>
-  )
-}
+const Stat = ({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay: 0.4 }}
+    className="bg-[#FFF5EB] dark:bg-[#4A4560] rounded-xl p-3"
+  >
+    <div className="flex justify-center mb-1">{icon}</div>
+    <div className="font-display font-bold text-lg text-[#3E2723] dark:text-[#F8F8F2]">{value}</div>
+    <div className="text-xs text-[#8D6E63] dark:text-[#B0BEC5]">{label}</div>
+  </motion.div>
+)

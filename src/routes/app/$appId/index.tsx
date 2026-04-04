@@ -42,17 +42,17 @@ export const SetSelectionPage = () => {
     <div className="max-w-2xl mx-auto">
       <div className="flex items-center gap-3 mb-8">
         <Link to="/">
-          <Button variant="ghost" size="icon" className="rounded-xl text-[#8D6E63]">
+          <Button variant="ghost" size="icon" className="rounded-xl text-[#8D6E63] dark:text-[#B0BEC5]">
             <ArrowLeft className="h-5 w-5" />
           </Button>
         </Link>
         <div>
-          <h1 className="font-display font-black text-2xl text-[#3E2723]">{app.name}</h1>
-          <p className="text-[#8D6E63] text-sm">Pick the hotkey sets you want to practice</p>
+          <h1 className="font-display font-black text-2xl text-[#3E2723] dark:text-[#F8F8F2]">{app.name}</h1>
+          <p className="text-[#8D6E63] dark:text-[#B0BEC5] text-sm">Pick the hotkey sets you want to practice</p>
         </div>
         <div className="ml-auto flex gap-2">
           <Link to="/app/$appId/dashboard" params={{ appId }}>
-            <Button variant="outline" size="sm" className="rounded-xl border-[#F5E6D8] text-[#8D6E63]">
+            <Button variant="outline" size="sm" className="rounded-xl border-[#F5E6D8] dark:border-[#5A5570] text-[#8D6E63] dark:text-[#B0BEC5]">
               Dashboard
             </Button>
           </Link>

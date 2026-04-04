@@ -15,7 +15,7 @@ export function ScreenshotDisplay({ src, phase, appName, action, accentColor }: 
   const fallback = placeholderScreenshot(appName, action, accentColor, phase)
 
   return (
-    <div className="w-full rounded-2xl overflow-hidden border-2 border-[#F5E6D8] shadow-lg bg-[#FFF5EB]">
+    <div className="w-full rounded-2xl overflow-hidden border-2 border-[#F5E6D8] dark:border-[#5A5570] shadow-lg bg-[#FFF5EB] dark:bg-[#4A4560]">
       <AnimatePresence mode="wait">
         <motion.img
           key={src}
