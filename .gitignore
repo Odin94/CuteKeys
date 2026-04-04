@@ -1,3 +1,5 @@
 node_modules/
 oprocs/
 .oprocs/
+.claude/
+.docs/
