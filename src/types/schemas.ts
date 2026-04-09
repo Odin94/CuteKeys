@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const appIdSchema = z.enum(['cursor', 'zed', 'ghostty'])
+export const appIdSchema = z.enum(['cursor', 'zed', 'ghostty', 'codex'])
 export type AppId = z.infer<typeof appIdSchema>
 
 export const trainSearchSchema = z.object({

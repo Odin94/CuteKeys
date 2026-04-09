@@ -70,6 +70,7 @@ const AppLogo = ({ app }: { app: AppDefinition }) => {
     cursor: '🖱️',
     zed: '⚡',
     ghostty: '👻',
+    codex: '🤖',
   }
   return <span>{emoji[app.id] ?? '💻'}</span>
 }

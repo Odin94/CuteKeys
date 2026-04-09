@@ -17,11 +17,9 @@ export function isMac(): boolean {
   return getPlatform() === 'mac'
 }
 
-/** Map a data-level modifier to the actual keyboard modifier for this platform.
- *  Data uses 'ctrl' as the "primary" modifier.
- *  On Mac, 'ctrl' maps to 'meta' (Cmd). */
+/** Map a data-level modifier to the actual keyboard modifier for this platform. */
 export function mapModifier(mod: ModifierKey): ModifierKey {
-  if (mod === 'ctrl' && isMac()) return 'meta'
+  if (mod === 'primary') return isMac() ? 'meta' : 'ctrl'
   return mod
 }
 
@@ -29,13 +27,15 @@ export function mapModifier(mod: ModifierKey): ModifierKey {
 export function modifierLabel(mod: ModifierKey): string {
   const platform = getPlatform()
   switch (mod) {
+    case 'primary':
+      return platform === 'mac' ? 'Cmd' : 'Ctrl'
     case 'ctrl':
-      return platform === 'mac' ? '⌘' : 'Ctrl'
+      return 'Ctrl'
     case 'shift':
-      return platform === 'mac' ? '⇧' : 'Shift'
+      return platform === 'mac' ? 'Shift' : 'Shift'
     case 'alt':
-      return platform === 'mac' ? '⌥' : 'Alt'
+      return platform === 'mac' ? 'Option' : 'Alt'
     case 'meta':
-      return platform === 'mac' ? '⌘' : 'Win'
+      return platform === 'mac' ? 'Cmd' : 'Win'
   }
 }

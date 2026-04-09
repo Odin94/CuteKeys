@@ -17,7 +17,7 @@ export function eventToKeyCombo(e: KeyboardEvent): KeyCombo {
 }
 
 /** Compare a pressed KeyCombo against an expected KeyCombo from data.
- *  Applies platform modifier mapping so 'ctrl' in data matches Cmd on Mac. */
+ *  Applies platform modifier mapping so data can express cross-platform shortcuts. */
 export function keyCombosMatch(pressed: KeyCombo, expected: KeyCombo): boolean {
   const mappedExpected: KeyCombo = {
     modifiers: expected.modifiers.map(mapModifier),
@@ -32,7 +32,7 @@ export function keyCombosMatch(pressed: KeyCombo, expected: KeyCombo): boolean {
   return sortedPressed === sortedExpected
 }
 
-/** Pretty display string for a KeyCombo, e.g. "Ctrl+P" or "⌘P" */
+/** Pretty display string for a KeyCombo, e.g. "Ctrl+P" or "Cmd+P" */
 export function toDisplayString(combo: KeyCombo): string {
   const mods = combo.modifiers.map(modifierLabel)
   const key = formatKey(combo.key)
@@ -41,18 +41,24 @@ export function toDisplayString(combo: KeyCombo): string {
 
 function formatKey(key: string): string {
   const map: Record<string, string> = {
-    arrowup: '↑',
-    arrowdown: '↓',
-    arrowleft: '←',
-    arrowright: '→',
+    arrowup: 'Up',
+    arrowdown: 'Down',
+    arrowleft: 'Left',
+    arrowright: 'Right',
     pageup: 'PgUp',
     pagedown: 'PgDn',
-    enter: '↵',
+    enter: 'Enter',
     escape: 'Esc',
     tab: 'Tab',
-    backspace: '⌫',
+    backspace: 'Backspace',
     delete: 'Del',
     ' ': 'Space',
+    ',': ',',
+    '`': '`',
+    '[': '[',
+    ']': ']',
+    '-': '-',
+    '=': '=',
   }
   return map[key.toLowerCase()] ?? key.toUpperCase()
 }

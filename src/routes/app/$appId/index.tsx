@@ -1,18 +1,21 @@
 import { useNavigate, useParams, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { ArrowLeft, Play } from 'lucide-react'
+import { ArrowLeft, Play, Maximize2, TriangleAlert } from 'lucide-react'
 import { appsById } from '@/data/apps'
 import { HotkeySetCard } from '@/components/setup/hotkey-set-card'
 import { Button } from '@/components/ui/button'
 import { getAppStats } from '@/lib/storage'
 import { PageWrapper } from '@/components/layout/page-wrapper'
+import { isBrowserReserved } from '@/lib/browser-shortcuts'
+import { isFocusModeSupported } from '@/hooks/use-keyboard-lock'
 
 export const SetSelectionPage = () => {
   const { appId } = useParams({ from: '/app/$appId/' })
   const app = appsById[appId]!
   const navigate = useNavigate()
   const stats = getAppStats(appId)
+  const focusModeSupported = isFocusModeSupported()
 
   const [selectedSetIds, setSelectedSetIds] = useState<Set<string>>(new Set())
 
@@ -31,6 +34,10 @@ export const SetSelectionPage = () => {
       const active = s.hotkeys.filter((h) => !stats.hotkeyPerformance[h.id]?.excluded)
       return sum + active.length
     }, 0)
+
+  const anySetHasConflicts = app.sets.some((s) =>
+    s.hotkeys.some((h) => isBrowserReserved(h.keys))
+  )
 
   const startTraining = () => {
     const sets = Array.from(selectedSetIds).join(',')
@@ -58,6 +65,31 @@ export const SetSelectionPage = () => {
           </Link>
         </div>
       </div>
+
+      {anySetHasConflicts ? (
+        <div className="flex items-start gap-3 mb-5 px-4 py-3 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-sm">
+          <TriangleAlert className="w-4 h-4 mt-0.5 shrink-0" />
+          <div className="flex flex-col gap-0.5">
+            {focusModeSupported ? (
+              <>
+                <span className="font-semibold">Some shortcuts are browser-reserved</span>
+                <span className="text-amber-700/80 dark:text-amber-400/80 text-xs">
+                  Sets marked with <strong>browser</strong> contain hotkeys your browser may intercept.
+                  Use the <Maximize2 className="inline w-3 h-3 mx-0.5" /><strong>Focus mode</strong> button during training to fully capture them.
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="font-semibold">Some shortcuts are browser-reserved</span>
+                <span className="text-amber-700/80 dark:text-amber-400/80 text-xs">
+                  Sets marked with <strong>browser</strong> contain hotkeys your browser may intercept.
+                  You can still practice them by pressing the modifier keys one by one, then the final key (sequential input).
+                </span>
+              </>
+            )}
+          </div>
+        </div>
+      ) : null}
 
       <div className="flex flex-col gap-4 pb-28">
         {app.sets.map((set, i) => (

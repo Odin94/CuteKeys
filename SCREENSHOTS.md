@@ -99,6 +99,39 @@ Placeholder SVGs are generated automatically for missing screenshots, so the app
 
 ---
 
+## Codex (28 screenshots)
+
+### Workspace Set (`codex/workspace/`)
+
+| Hotkey | Before | After |
+|--------|--------|-------|
+| Command Menu (Cmd+K) | Thread view with composer idle | Command menu visible |
+| Open Folder (Cmd+O) | Codex home or thread view | Folder picker or workspace chooser opened |
+| Navigate Back (Cmd+[) | Later screen in navigation history | Previous screen visible |
+| Navigate Forward (Cmd+]) | Earlier screen after going back | Forward screen restored |
+
+### Panels Set (`codex/panels/`)
+
+| Hotkey | Before | After |
+|--------|--------|-------|
+| Open Settings (Cmd+,) | Main app view | Settings panel or screen visible |
+| Toggle Sidebar (Cmd+B) | Sidebar visible | Sidebar hidden |
+| Toggle Diff Panel (Cmd+Option+B) | Diff panel closed | Diff panel open |
+| Toggle Terminal (Cmd+J) | Terminal hidden | Terminal panel visible |
+| Clear Terminal (Ctrl+L) | Terminal with previous output | Terminal cleared |
+
+### Thread Set (`codex/thread/`)
+
+| Hotkey | Before | After |
+|--------|--------|-------|
+| New Thread (Cmd+N) | Existing thread open | Fresh thread created |
+| Find in Thread (Cmd+F) | Long thread with messages | Thread search UI open |
+| Previous Thread (Cmd+Shift+[) | Later thread selected | Previous thread selected |
+| Next Thread (Cmd+Shift+]) | Earlier thread selected | Next thread selected |
+| Dictation (Ctrl+M) | Composer focused | Dictation started in composer |
+
+---
+
 ## Capture Tips
 
 - Use a **consistent window size** (1280×800) across all screenshots for the same app

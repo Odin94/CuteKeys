@@ -1,4 +1,4 @@
-export type ModifierKey = 'ctrl' | 'shift' | 'alt' | 'meta'
+export type ModifierKey = 'primary' | 'ctrl' | 'shift' | 'alt' | 'meta'
 
 export interface KeyCombo {
   modifiers: ModifierKey[]

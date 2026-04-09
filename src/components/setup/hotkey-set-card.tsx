@@ -1,7 +1,8 @@
 import { motion, AnimatePresence } from 'motion/react'
-import { Check, ChevronDown } from 'lucide-react'
+import { Check, ChevronDown, TriangleAlert } from 'lucide-react'
 import type { HotkeySet } from '@/types/hotkey'
 import { toDisplayString } from '@/lib/hotkey-utils'
+import { isBrowserReserved } from '@/lib/browser-shortcuts'
 import { cn } from '@/lib/cn'
 import { useState } from 'react'
 
@@ -15,6 +16,11 @@ type HotkeySetCardProps = {
 
 export const HotkeySetCard = ({ set, selected, onToggle, accentColor, index = 0 }: HotkeySetCardProps) => {
   const [expanded, setExpanded] = useState(false)
+
+  const reservedIds = new Set(
+    set.hotkeys.filter((h) => isBrowserReserved(h.keys)).map((h) => h.id)
+  )
+  const hasConflicts = reservedIds.size > 0
 
   return (
     <motion.div
@@ -42,7 +48,7 @@ export const HotkeySetCard = ({ set, selected, onToggle, accentColor, index = 0 
       >
         <div
           className={cn(
-            'w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors',
+            'w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors',
             selected ? 'bg-[#F43F5E]' : 'bg-[#FFF5EB] dark:bg-[#4A4560]'
           )}
           style={selected ? {} : { backgroundColor: `${accentColor}18` }}
@@ -55,11 +61,22 @@ export const HotkeySetCard = ({ set, selected, onToggle, accentColor, index = 0 
         </div>
 
         <div className="flex-1 min-w-0">
-          <h3 className="font-display font-bold text-[#3E2723] dark:text-[#F8F8F2]">{set.name}</h3>
+          <div className="flex items-center gap-2">
+            <h3 className="font-display font-bold text-[#3E2723] dark:text-[#F8F8F2]">{set.name}</h3>
+            {hasConflicts ? (
+              <span
+                title="Some hotkeys in this set may be intercepted by your browser"
+                className="flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-[#FFF5EB] dark:bg-[#4A4560] text-[#8D6E63] dark:text-[#B0BEC5] border border-[#F5E6D8] dark:border-[#5A5570]"
+              >
+                <TriangleAlert className="w-2.5 h-2.5 opacity-70" />
+                browser
+              </span>
+            ) : null}
+          </div>
           <p className="text-sm text-[#8D6E63] dark:text-[#B0BEC5] truncate">{set.description}</p>
         </div>
 
-        <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
           <span
             className="text-xs font-semibold px-2 py-1 rounded-full"
             style={{ backgroundColor: `${accentColor}18`, color: accentColor }}
@@ -88,11 +105,19 @@ export const HotkeySetCard = ({ set, selected, onToggle, accentColor, index = 0 
           >
             <div className="px-5 pb-5 border-t border-[#F5E6D8] dark:border-[#5A5570] pt-3 flex flex-col gap-2">
               {set.hotkeys.map((hotkey) => (
-                <div key={hotkey.id} className="flex items-center justify-between text-sm">
+                <div key={hotkey.id} className="flex items-center justify-between text-sm gap-2">
                   <span className="text-[#8D6E63] dark:text-[#B0BEC5]">{hotkey.label}</span>
-                  <kbd className="font-mono text-xs px-2 py-1 rounded-lg bg-[#FFF5EB] dark:bg-[#4A4560] border border-[#F5E6D8] dark:border-[#5A5570] text-[#3E2723] dark:text-[#F8F8F2]">
-                    {toDisplayString(hotkey.keys)}
-                  </kbd>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {reservedIds.has(hotkey.id) ? (
+                      <TriangleAlert
+                        className="w-3 h-3 text-[#8D6E63] dark:text-[#B0BEC5] opacity-60"
+                        aria-label="May be intercepted by browser"
+                      />
+                    ) : null}
+                    <kbd className="font-mono text-xs px-2 py-1 rounded-lg bg-[#FFF5EB] dark:bg-[#4A4560] border border-[#F5E6D8] dark:border-[#5A5570] text-[#3E2723] dark:text-[#F8F8F2]">
+                      {toDisplayString(hotkey.keys)}
+                    </kbd>
+                  </div>
                 </div>
               ))}
             </div>
