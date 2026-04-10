@@ -1,3 +1,5 @@
+import type { AppHotkeyOverrides } from './hotkey'
+
 export interface HotkeyPerformance {
   hotkeyId: string
   totalAttempts: number
@@ -33,7 +35,8 @@ export interface AppStats {
 }
 
 export interface StorageData {
-  version: 1
+  version: 2
   stats: Record<string, AppStats>
   settings: UserSettings
+  hotkeyOverrides: Record<string, AppHotkeyOverrides>
 }

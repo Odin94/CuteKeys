@@ -5,10 +5,12 @@ import { ArrowLeft, Play, Maximize2, TriangleAlert } from 'lucide-react'
 import { appsById } from '@/data/apps'
 import { HotkeySetCard } from '@/components/setup/hotkey-set-card'
 import { Button } from '@/components/ui/button'
-import { getAppStats } from '@/lib/storage'
+import { getAppStats, getHotkeyOverrides, saveHotkeyOverrides } from '@/lib/storage'
 import { PageWrapper } from '@/components/layout/page-wrapper'
 import { isBrowserReserved } from '@/lib/browser-shortcuts'
 import { isFocusModeSupported } from '@/hooks/use-keyboard-lock'
+import { getTrainableHotkeys, setHasOverrides } from '@/lib/hotkey-overrides'
+import type { HotkeySetOverrides } from '@/types/hotkey'
 
 export const SetSelectionPage = () => {
   const { appId } = useParams({ from: '/app/$appId/' })
@@ -16,8 +18,22 @@ export const SetSelectionPage = () => {
   const navigate = useNavigate()
   const stats = getAppStats(appId)
   const focusModeSupported = isFocusModeSupported()
+  const [overrides, setOverrides] = useState(() => getHotkeyOverrides(appId))
 
   const [selectedSetIds, setSelectedSetIds] = useState<Set<string>>(new Set())
+
+  const updateSetOverrides = (setId: string, nextSetOverrides: HotkeySetOverrides) => {
+    setOverrides((prev) => {
+      const next = { ...prev }
+      if (Object.keys(nextSetOverrides).length === 0) {
+        delete next[setId]
+      } else {
+        next[setId] = nextSetOverrides
+      }
+      saveHotkeyOverrides(appId, next)
+      return next
+    })
+  }
 
   const toggleSet = (setId: string) => {
     setSelectedSetIds((prev) => {
@@ -30,16 +46,14 @@ export const SetSelectionPage = () => {
 
   const totalHotkeys = app.sets
     .filter((s) => selectedSetIds.has(s.id))
-    .reduce((sum, s) => {
-      const active = s.hotkeys.filter((h) => !stats.hotkeyPerformance[h.id]?.excluded)
-      return sum + active.length
-    }, 0)
+    .reduce((sum, s) => sum + getTrainableHotkeys(s, overrides, stats).length, 0)
 
   const anySetHasConflicts = app.sets.some((s) =>
-    s.hotkeys.some((h) => isBrowserReserved(h.keys))
+    getTrainableHotkeys(s, overrides, stats).some((h) => isBrowserReserved(h.keys))
   )
 
   const startTraining = () => {
+    if (totalHotkeys === 0) return
     const sets = Array.from(selectedSetIds).join(',')
     navigate({ to: '/app/$appId/train', params: { appId }, search: { sets } })
   }
@@ -96,9 +110,13 @@ export const SetSelectionPage = () => {
           <HotkeySetCard
             key={set.id}
             set={set}
+            overrides={overrides[set.id]}
             selected={selectedSetIds.has(set.id)}
             onToggle={() => toggleSet(set.id)}
+            onSaveOverrides={(setOverrides) => updateSetOverrides(set.id, setOverrides)}
             accentColor={app.accentColor}
+            trainableHotkeyCount={getTrainableHotkeys(set, overrides, stats).length}
+            hasOverrides={setHasOverrides(set, overrides)}
             index={i}
           />
         ))}
@@ -115,7 +133,8 @@ export const SetSelectionPage = () => {
           >
             <button
               onClick={startTraining}
-              className="flex items-center gap-3 bg-[#F43F5E] hover:bg-[#E11D48] text-white font-display font-bold px-8 py-4 rounded-2xl shadow-xl shadow-[#F43F5E]/30 transition-colors"
+              disabled={totalHotkeys === 0}
+              className="flex items-center gap-3 bg-[#F43F5E] hover:bg-[#E11D48] disabled:bg-[#F8B4C0] disabled:shadow-none disabled:cursor-not-allowed text-white font-display font-bold px-8 py-4 rounded-2xl shadow-xl shadow-[#F43F5E]/30 transition-colors"
             >
               <Play className="h-5 w-5 fill-white" />
               Start Training

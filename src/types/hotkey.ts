@@ -23,6 +23,14 @@ export interface HotkeySet {
   hotkeys: HotkeyEntry[]
 }
 
+export interface HotkeyOverride {
+  enabled: boolean
+  keys: KeyCombo | null
+}
+
+export type HotkeySetOverrides = Record<string, HotkeyOverride>
+export type AppHotkeyOverrides = Record<string, HotkeySetOverrides>
+
 export interface AppDefinition {
   id: string
   name: string

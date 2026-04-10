@@ -80,9 +80,7 @@ function sessionReducer(
       }
     }
 
-    case 'KEY_PRESSED_DURING_TIMEOUT': {
-      // During timeout, user must press the revealed hotkey to continue
-      // We accept any keypress to move to reveal phase
+    case 'CORRECT_PRESS_DURING_TIMEOUT': {
       const attempt: HotkeyAttempt = {
         hotkeyId: state.queue[state.currentIndex].id,
         correct: false,
@@ -92,7 +90,24 @@ function sessionReducer(
       }
       return {
         ...state,
-        phase: 'reveal',
+        phase: 'timeoutSuccess',
+        attempts: state.attempts.some((a) => a.hotkeyId === state.queue[state.currentIndex].id)
+          ? state.attempts
+          : [...state.attempts, attempt],
+      }
+    }
+
+    case 'SKIP_DURING_TIMEOUT': {
+      const attempt: HotkeyAttempt = {
+        hotkeyId: state.queue[state.currentIndex].id,
+        correct: false,
+        responseTimeMs: null,
+        pressedKeys: null,
+        points: 0,
+      }
+      return {
+        ...state,
+        phase: 'skipped',
         attempts: state.attempts.some((a) => a.hotkeyId === state.queue[state.currentIndex].id)
           ? state.attempts
           : [...state.attempts, attempt],
@@ -151,8 +166,12 @@ export function useTrainingSession() {
     dispatch({ type: 'TIMEOUT' })
   }, [])
 
-  const handleKeyDuringTimeout = useCallback((pressedKeys: KeyCombo) => {
-    dispatch({ type: 'KEY_PRESSED_DURING_TIMEOUT', pressedKeys })
+  const handleCorrectPressDuringTimeout = useCallback((pressedKeys: KeyCombo) => {
+    dispatch({ type: 'CORRECT_PRESS_DURING_TIMEOUT', pressedKeys })
+  }, [])
+
+  const handleSkipDuringTimeout = useCallback(() => {
+    dispatch({ type: 'SKIP_DURING_TIMEOUT' })
   }, [])
 
   const advance = useCallback(() => {
@@ -164,7 +183,8 @@ export function useTrainingSession() {
     startSession,
     handleCorrectPress,
     handleTimeout,
-    handleKeyDuringTimeout,
+    handleCorrectPressDuringTimeout,
+    handleSkipDuringTimeout,
     advance,
   }
 }

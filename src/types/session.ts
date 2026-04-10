@@ -4,7 +4,9 @@ export type TrainingPhase =
   | 'prompt'   // Countdown running, waiting for keypress
   | 'success'  // Correct keypress, celebration playing
   | 'timeout'  // Timer expired, showing correct key, waiting for user to press it
+  | 'timeoutSuccess' // Correct keypress after timeout, showing success message before advancing
   | 'reveal'   // Showing after-screenshot before advancing
+  | 'skipped'  // Showing a neutral skip message before advancing
   | 'finished' // Session complete
 
 export interface HotkeyAttempt {
@@ -34,5 +36,6 @@ export type SessionAction =
   | { type: 'TICK'; remainingMs: number }
   | { type: 'CORRECT_PRESS'; responseTimeMs: number; pressedKeys: KeyCombo }
   | { type: 'TIMEOUT' }
-  | { type: 'KEY_PRESSED_DURING_TIMEOUT'; pressedKeys: KeyCombo }
+  | { type: 'CORRECT_PRESS_DURING_TIMEOUT'; pressedKeys: KeyCombo }
+  | { type: 'SKIP_DURING_TIMEOUT' }
   | { type: 'ADVANCE' }

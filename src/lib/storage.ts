@@ -1,19 +1,30 @@
 import { storageDataSchema } from '@/types/schemas'
 import type { StorageData, AppStats, HotkeyPerformance, LeaderboardEntry } from '@/types/stats'
 import type { HotkeyAttempt } from '@/types/session'
+import type { AppHotkeyOverrides } from '@/types/hotkey'
 
 const STORAGE_KEY = 'cutekey-data'
 const MAX_LEADERBOARD = 20
 
 export function defaultStorage(): StorageData {
   return {
-    version: 1,
+    version: 2,
     stats: {},
     settings: {
       countdownSeconds: 3,
       soundEnabled: true,
       modifierDisplay: 'auto',
     },
+    hotkeyOverrides: {},
+  }
+}
+
+function normalizeStorageData(data: ReturnType<typeof storageDataSchema.parse>): StorageData {
+  return {
+    version: 2,
+    stats: data.stats,
+    settings: data.settings,
+    hotkeyOverrides: data.hotkeyOverrides ?? {},
   }
 }
 
@@ -23,7 +34,7 @@ export function loadStorage(): StorageData {
     if (!raw) return defaultStorage()
     const parsed = JSON.parse(raw)
     const result = storageDataSchema.safeParse(parsed)
-    if (result.success) return result.data
+    if (result.success) return normalizeStorageData(result.data)
     return defaultStorage()
   } catch {
     return defaultStorage()
@@ -110,6 +121,16 @@ export function toggleExcludeHotkey(appId: string, hotkeyId: string): void {
 
 export function getSettings() {
   return loadStorage().settings
+}
+
+export function getHotkeyOverrides(appId: string): AppHotkeyOverrides {
+  return loadStorage().hotkeyOverrides[appId] ?? {}
+}
+
+export function saveHotkeyOverrides(appId: string, overrides: AppHotkeyOverrides): void {
+  const data = loadStorage()
+  data.hotkeyOverrides[appId] = overrides
+  saveStorage(data)
 }
 
 export function saveSettings(settings: StorageData['settings']): void {

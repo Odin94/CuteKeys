@@ -123,4 +123,45 @@
   .text-brown-muted {
     color: #8D6E63;
   }
+
+  .cutekey-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #F4A5B5 #FFF5EB;
+  }
+
+  .cutekey-scrollbar::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  .cutekey-scrollbar::-webkit-scrollbar-track {
+    background: linear-gradient(180deg, #FFF8F2 0%, #FFF1F2 100%);
+    border-radius: 999px;
+  }
+
+  .cutekey-scrollbar::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #F8B4C0 0%, #F43F5E 100%);
+    border: 2px solid #FFF8F2;
+    border-radius: 999px;
+  }
+
+  .cutekey-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #FB7185 0%, #E11D48 100%);
+  }
+
+  .dark .cutekey-scrollbar {
+    scrollbar-color: #FFB8D1 #4A4560;
+  }
+
+  .dark .cutekey-scrollbar::-webkit-scrollbar-track {
+    background: linear-gradient(180deg, #342F46 0%, #413C58 100%);
+  }
+
+  .dark .cutekey-scrollbar::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #FFB8D1 0%, #F472B6 100%);
+    border-color: #342F46;
+  }
+
+  .dark .cutekey-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #FFC8DC 0%, #FB7185 100%);
+  }
 }

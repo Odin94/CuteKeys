@@ -33,9 +33,6 @@ export const ResultsPage = () => {
       </PageWrapper>
     )
   }
-
-  const allHotkeys = app.sets.flatMap((s) => s.hotkeys)
-
   return (
     <PageWrapper>
     <div className="max-w-2xl mx-auto">
@@ -55,7 +52,7 @@ export const ResultsPage = () => {
           className="bg-white dark:bg-[#3A3550] rounded-2xl border border-[#F5E6D8] dark:border-[#5A5570] p-5"
         >
           <h3 className="font-display font-bold text-[#3E2723] dark:text-[#F8F8F2] mb-4">This Session</h3>
-          <HotkeyResultsList attempts={session.attempts} hotkeys={allHotkeys} />
+          <HotkeyResultsList attempts={session.attempts} hotkeys={session.queue} />
         </motion.div>
 
         <motion.div

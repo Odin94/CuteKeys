@@ -7,6 +7,11 @@ export const trainSearchSchema = z.object({
   sets: z.string().optional(),
 })
 
+export const keyComboSchema = z.object({
+  modifiers: z.array(z.enum(['primary', 'ctrl', 'shift', 'alt', 'meta'])),
+  key: z.string(),
+})
+
 export const hotkeyPerformanceSchema = z.object({
   hotkeyId: z.string(),
   totalAttempts: z.number(),
@@ -41,8 +46,17 @@ export const userSettingsSchema = z.object({
   modifierDisplay: z.enum(['auto', 'ctrl', 'cmd']),
 })
 
+export const hotkeyOverrideSchema = z.object({
+  enabled: z.boolean(),
+  keys: keyComboSchema.nullable(),
+})
+
+export const hotkeySetOverridesSchema = z.record(hotkeyOverrideSchema)
+export const appHotkeyOverridesSchema = z.record(hotkeySetOverridesSchema)
+
 export const storageDataSchema = z.object({
-  version: z.literal(1),
+  version: z.union([z.literal(1), z.literal(2)]),
   stats: z.record(appStatsSchema),
   settings: userSettingsSchema,
+  hotkeyOverrides: z.record(appHotkeyOverridesSchema).default({}),
 })

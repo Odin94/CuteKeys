@@ -3,6 +3,19 @@ import { mapModifier, modifierLabel } from './platform'
 
 const MODIFIER_KEYS = new Set(['Control', 'Shift', 'Alt', 'Meta'])
 
+export function normalizeKeyCombo(combo: KeyCombo): KeyCombo {
+  return {
+    modifiers: [...new Set(combo.modifiers)].sort(),
+    key: combo.key.toLowerCase(),
+  }
+}
+
+export function keyCombosEqual(a: KeyCombo, b: KeyCombo): boolean {
+  const normalizedA = normalizeKeyCombo(a)
+  const normalizedB = normalizeKeyCombo(b)
+  return normalizedA.key === normalizedB.key && normalizedA.modifiers.join(',') === normalizedB.modifiers.join(',')
+}
+
 export function isBareModifier(e: KeyboardEvent): boolean {
   return MODIFIER_KEYS.has(e.key)
 }
@@ -13,29 +26,25 @@ export function eventToKeyCombo(e: KeyboardEvent): KeyCombo {
   if (e.shiftKey) modifiers.push('shift')
   if (e.altKey) modifiers.push('alt')
   if (e.metaKey) modifiers.push('meta')
-  return { modifiers, key: e.key.toLowerCase() }
+  return normalizeKeyCombo({ modifiers, key: e.key.toLowerCase() })
 }
 
 /** Compare a pressed KeyCombo against an expected KeyCombo from data.
  *  Applies platform modifier mapping so data can express cross-platform shortcuts. */
 export function keyCombosMatch(pressed: KeyCombo, expected: KeyCombo): boolean {
-  const mappedExpected: KeyCombo = {
+  const mappedExpected = normalizeKeyCombo({
     modifiers: expected.modifiers.map(mapModifier),
     key: expected.key.toLowerCase(),
-  }
+  })
 
-  const pressedKey = pressed.key.toLowerCase()
-  if (pressedKey !== mappedExpected.key) return false
-
-  const sortedPressed = [...pressed.modifiers].sort().join(',')
-  const sortedExpected = [...mappedExpected.modifiers].sort().join(',')
-  return sortedPressed === sortedExpected
+  return keyCombosEqual(normalizeKeyCombo(pressed), mappedExpected)
 }
 
 /** Pretty display string for a KeyCombo, e.g. "Ctrl+P" or "Cmd+P" */
 export function toDisplayString(combo: KeyCombo): string {
-  const mods = combo.modifiers.map(modifierLabel)
-  const key = formatKey(combo.key)
+  const normalized = normalizeKeyCombo(combo)
+  const mods = normalized.modifiers.map(modifierLabel)
+  const key = formatKey(normalized.key)
   return [...mods, key].join('+')
 }
 

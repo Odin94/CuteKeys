@@ -1,8 +1,7 @@
 import { useEffect, useCallback, useRef } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { Maximize2, Minimize2, TriangleAlert } from 'lucide-react'
-import type { AppDefinition } from '@/types/hotkey'
-import type { KeyCombo } from '@/types/hotkey'
+import type { AppDefinition, KeyCombo } from '@/types/hotkey'
 import { useTrainingSession } from '@/hooks/use-training-session'
 import { useCountdown } from '@/hooks/use-countdown'
 import { useHotkeyCapture } from '@/hooks/use-hotkey-capture'
@@ -14,9 +13,10 @@ import { ActionPrompt } from './action-prompt'
 import { CountdownRing } from './countdown-ring'
 import { SuccessCelebration } from './success-celebration'
 import { FailReveal } from './fail-reveal'
-import { getSettings } from '@/lib/storage'
+import { getAppStats, getHotkeyOverrides, getSettings } from '@/lib/storage'
 import { isBrowserReserved } from '@/lib/browser-shortcuts'
 import { modifierLabel } from '@/lib/platform'
+import { getTrainableHotkeys } from '@/lib/hotkey-overrides'
 
 type TrainingViewProps = {
   app: AppDefinition
@@ -26,11 +26,13 @@ type TrainingViewProps = {
 
 export const TrainingView = ({ app, selectedSetIds, onFinish }: TrainingViewProps) => {
   const settings = getSettings()
+  const stats = getAppStats(app.id)
+  const overrides = getHotkeyOverrides(app.id)
   const hotkeys = app.sets
     .filter((s) => selectedSetIds.includes(s.id))
-    .flatMap((s) => s.hotkeys)
+    .flatMap((s) => getTrainableHotkeys(s, overrides, stats))
 
-  const { state, startSession, handleCorrectPress, handleTimeout, handleKeyDuringTimeout, advance } =
+  const { state, startSession, handleCorrectPress, handleTimeout, handleCorrectPressDuringTimeout, handleSkipDuringTimeout, advance } =
     useTrainingSession()
 
   const sessionStarted = useRef(false)
@@ -48,7 +50,6 @@ export const TrainingView = ({ app, selectedSetIds, onFinish }: TrainingViewProp
 
   const countdown = useCountdown(handleExpire)
 
-  // Start countdown when phase becomes 'prompt'
   useEffect(() => {
     if (state.phase === 'prompt' && state.queue.length > 0) {
       sessionStartTime.current = Date.now()
@@ -57,23 +58,19 @@ export const TrainingView = ({ app, selectedSetIds, onFinish }: TrainingViewProp
     if (state.phase !== 'prompt') {
       countdown.pause()
     }
-  // Include state.queue.length so the effect re-runs when START_SESSION populates the queue
-  // (phase stays 'prompt' and currentIndex stays 0, so they alone wouldn't retrigger)
   }, [state.phase, state.currentIndex, state.queue.length]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Auto-advance after success/reveal
   useEffect(() => {
     if (state.phase === 'success') {
       const t = setTimeout(() => advance(), 1600)
       return () => clearTimeout(t)
     }
-    if (state.phase === 'reveal') {
+    if (state.phase === 'reveal' || state.phase === 'skipped' || state.phase === 'timeoutSuccess') {
       const t = setTimeout(() => advance(), 1200)
       return () => clearTimeout(t)
     }
   }, [state.phase, advance])
 
-  // Navigate to results when finished
   useEffect(() => {
     if (state.phase === 'finished') {
       onFinish(state)
@@ -90,24 +87,23 @@ export const TrainingView = ({ app, selectedSetIds, onFinish }: TrainingViewProp
   }, [state.phase, currentHotkey, handleCorrectPress])
 
   const onMismatch = useCallback((_pressed: KeyCombo) => {
-    // Wrong key — do nothing in any phase, let the user try the correct one
+    // Wrong key: do nothing and let the user keep trying.
   }, [])
 
   const handleSkip = useCallback(() => {
     if (state.phase === 'timeout') {
-      handleKeyDuringTimeout(currentHotkey.keys)
+      handleSkipDuringTimeout()
     }
-  }, [state.phase, currentHotkey, handleKeyDuringTimeout])
+  }, [state.phase, handleSkipDuringTimeout])
 
-  // Also handle correct key during timeout
   const onMatchDuringTimeout = useCallback(() => {
     if (state.phase === 'timeout') {
-      handleKeyDuringTimeout(currentHotkey.keys)
+      handleCorrectPressDuringTimeout(currentHotkey.keys)
     } else if (state.phase === 'prompt') {
       const responseTimeMs = Date.now() - sessionStartTime.current
       handleCorrectPress(responseTimeMs, currentHotkey.keys)
     }
-  }, [state.phase, currentHotkey, handleCorrectPress, handleKeyDuringTimeout])
+  }, [state.phase, currentHotkey, handleCorrectPress, handleCorrectPressDuringTimeout])
 
   const { stagedModifiers } = useHotkeyCapture({
     expectedCombo: currentHotkey?.keys ?? null,
@@ -122,7 +118,9 @@ export const TrainingView = ({ app, selectedSetIds, onFinish }: TrainingViewProp
   if (!currentHotkey || state.queue.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-cutekey-brown-muted dark:text-[#B0BEC5]">Loading session…</p>
+        <p className="text-cutekey-brown-muted dark:text-[#B0BEC5]">
+          {hotkeys.length === 0 ? 'No enabled hotkeys in these sets.' : 'Loading session...'}
+        </p>
       </div>
     )
   }
@@ -130,11 +128,13 @@ export const TrainingView = ({ app, selectedSetIds, onFinish }: TrainingViewProp
   const isReserved = isBrowserReserved(currentHotkey.keys)
   const showBrowserWarning = isReserved && !isLocked && state.phase === 'prompt'
 
-  const screenshotPhase = state.phase === 'reveal' || state.phase === 'success' ? 'after' : 'before'
+  const screenshotPhase =
+    state.phase === 'reveal' || state.phase === 'success' || state.phase === 'skipped' || state.phase === 'timeoutSuccess'
+      ? 'after'
+      : 'before'
 
   return (
     <div className="max-w-2xl mx-auto flex flex-col gap-6">
-      {/* Top bar */}
       <div className="flex items-center justify-between">
         <ProgressBar current={state.currentIndex + 1} total={state.queue.length} />
         <div className="flex items-center gap-3">
@@ -164,7 +164,6 @@ export const TrainingView = ({ app, selectedSetIds, onFinish }: TrainingViewProp
         </div>
       </div>
 
-      {/* Screenshot */}
       <ScreenshotDisplay
         src={screenshotPhase === 'before' ? currentHotkey.screenshotBefore : currentHotkey.screenshotAfter}
         phase={screenshotPhase}
@@ -173,7 +172,6 @@ export const TrainingView = ({ app, selectedSetIds, onFinish }: TrainingViewProp
         accentColor={app.accentColor}
       />
 
-      {/* Prompt / feedback area */}
       <div className="bg-white dark:bg-[#3A3550] rounded-2xl border border-[#F5E6D8] dark:border-[#5A5570] p-6">
         <AnimatePresence mode="wait">
           {state.phase === 'prompt' && (
@@ -254,8 +252,34 @@ export const TrainingView = ({ app, selectedSetIds, onFinish }: TrainingViewProp
               exit={{ opacity: 0 }}
               className="text-center py-4"
             >
-              <p className="text-[#22C55E] font-semibold text-lg">✓ That's the effect!</p>
-              <p className="text-[#8D6E63] dark:text-[#B0BEC5] text-sm mt-1">Next hotkey coming up…</p>
+              <p className="text-[#22C55E] font-semibold text-lg">That's the effect!</p>
+              <p className="text-[#8D6E63] dark:text-[#B0BEC5] text-sm mt-1">Next hotkey coming up...</p>
+            </motion.div>
+          )}
+
+          {state.phase === 'skipped' && (
+            <motion.div
+              key="skipped"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="text-center py-4"
+            >
+              <p className="text-[#8D6E63] dark:text-[#B0BEC5] font-semibold text-lg">Skipped this one</p>
+              <p className="text-[#8D6E63] dark:text-[#B0BEC5] text-sm mt-1 opacity-80">Next hotkey coming up...</p>
+            </motion.div>
+          )}
+
+          {state.phase === 'timeoutSuccess' && (
+            <motion.div
+              key="timeout-success"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="text-center py-4"
+            >
+              <p className="text-[#22C55E] font-semibold text-lg">Nice, you hit it</p>
+              <p className="text-[#8D6E63] dark:text-[#B0BEC5] text-sm mt-1 opacity-80">Even after time ran out. Next hotkey coming up...</p>
             </motion.div>
           )}
         </AnimatePresence>
