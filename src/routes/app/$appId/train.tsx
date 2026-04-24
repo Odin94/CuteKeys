@@ -42,7 +42,7 @@ export const TrainPage = () => {
     navigate({
       to: "/app/$appId/results",
       params: { appId },
-      state: { session: state, entryId: entry.id },
+      state: (prev) => ({ ...prev, session: state, entryId: entry.id }),
     });
   };
 
