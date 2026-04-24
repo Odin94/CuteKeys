@@ -1,33 +1,33 @@
-import { useEffect, useRef } from 'react'
-import { motion } from 'motion/react'
-import confetti from 'canvas-confetti'
+import { useEffect, useRef } from "react";
+import { motion } from "motion/react";
+import confetti from "canvas-confetti";
 
 interface SuccessCelebrationProps {
-  points: number
-  streak: number
+  points: number;
+  streak: number;
 }
 
 export function SuccessCelebration({ points, streak }: SuccessCelebrationProps) {
-  const fired = useRef(false)
+  const fired = useRef(false);
 
   useEffect(() => {
-    if (fired.current) return
-    fired.current = true
+    if (fired.current) return;
+    fired.current = true;
 
     confetti({
       particleCount: 80,
       spread: 70,
       origin: { x: 0.5, y: 0.6 },
-      colors: ['#F43F5E', '#8B5CF6', '#22C55E', '#FB923C', '#F9A8D4'],
+      colors: ["#F43F5E", "#8B5CF6", "#22C55E", "#FB923C", "#F9A8D4"],
       ticks: 200,
-    })
-  }, [])
+    });
+  }, []);
 
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ type: 'spring', bounce: 0.5 }}
+      transition={{ type: "spring", bounce: 0.5 }}
       className="text-center py-4"
     >
       <motion.div
@@ -44,7 +44,7 @@ export function SuccessCelebration({ points, streak }: SuccessCelebrationProps) 
         transition={{ delay: 0.1 }}
         className="font-display font-black text-xl text-[#22C55E]"
       >
-        {streak >= 3 ? `${streak}x Streak! 🔥` : 'Nice!'}
+        {streak >= 3 ? `${streak}x Streak! 🔥` : "Nice!"}
       </motion.p>
 
       <motion.div
@@ -56,5 +56,5 @@ export function SuccessCelebration({ points, streak }: SuccessCelebrationProps) 
         +{points}
       </motion.div>
     </motion.div>
-  )
+  );
 }

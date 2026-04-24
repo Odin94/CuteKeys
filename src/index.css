@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -6,9 +6,9 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-display: 'Nunito', sans-serif;
-  --font-sans: 'Inter', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-display: "Nunito", sans-serif;
+  --font-sans: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
 
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
@@ -30,19 +30,19 @@
   --color-destructive: var(--destructive);
 
   /* CuteKey custom colors */
-  --color-cutekey-rose: #F43F5E;
-  --color-cutekey-rose-light: #FFF1F2;
-  --color-cutekey-lavender: #8B5CF6;
-  --color-cutekey-lavender-light: #F5F3FF;
-  --color-cutekey-mint: #22C55E;
-  --color-cutekey-mint-light: #F0FDF4;
-  --color-cutekey-peach: #FB923C;
-  --color-cutekey-peach-light: #FFF7ED;
-  --color-cutekey-cream: #FFFBF5;
-  --color-cutekey-surface: #FFF5EB;
-  --color-cutekey-brown: #3E2723;
-  --color-cutekey-brown-muted: #8D6E63;
-  --color-cutekey-border: #F5E6D8;
+  --color-cutekey-rose: #f43f5e;
+  --color-cutekey-rose-light: #fff1f2;
+  --color-cutekey-lavender: #8b5cf6;
+  --color-cutekey-lavender-light: #f5f3ff;
+  --color-cutekey-mint: #22c55e;
+  --color-cutekey-mint-light: #f0fdf4;
+  --color-cutekey-peach: #fb923c;
+  --color-cutekey-peach-light: #fff7ed;
+  --color-cutekey-cream: #fffbf5;
+  --color-cutekey-surface: #fff5eb;
+  --color-cutekey-brown: #3e2723;
+  --color-cutekey-brown-muted: #8d6e63;
+  --color-cutekey-border: #f5e6d8;
 
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
@@ -54,46 +54,46 @@
 
 :root {
   /* CuteKey warm pastel theme */
-  --background: #FFFBF5;
-  --foreground: #3E2723;
-  --card: #FFFFFF;
-  --card-foreground: #3E2723;
-  --popover: #FFFFFF;
-  --popover-foreground: #3E2723;
-  --primary: #F43F5E;
-  --primary-foreground: #FFFFFF;
-  --secondary: #F5F3FF;
-  --secondary-foreground: #8B5CF6;
-  --muted: #FFF5EB;
-  --muted-foreground: #8D6E63;
-  --accent: #F0FDF4;
-  --accent-foreground: #22C55E;
-  --destructive: #EF4444;
-  --border: #F5E6D8;
-  --input: #F5E6D8;
-  --ring: #F43F5E;
+  --background: #fffbf5;
+  --foreground: #3e2723;
+  --card: #ffffff;
+  --card-foreground: #3e2723;
+  --popover: #ffffff;
+  --popover-foreground: #3e2723;
+  --primary: #f43f5e;
+  --primary-foreground: #ffffff;
+  --secondary: #f5f3ff;
+  --secondary-foreground: #8b5cf6;
+  --muted: #fff5eb;
+  --muted-foreground: #8d6e63;
+  --accent: #f0fdf4;
+  --accent-foreground: #22c55e;
+  --destructive: #ef4444;
+  --border: #f5e6d8;
+  --input: #f5e6d8;
+  --ring: #f43f5e;
   --radius: 0.75rem;
 }
 
 .dark {
-  --background: #433E56;
-  --foreground: #F8F8F2;
-  --card: #3A3550;
-  --card-foreground: #F8F8F2;
-  --popover: #3A3550;
-  --popover-foreground: #F8F8F2;
-  --primary: #FFB8D1;
-  --primary-foreground: #3A3550;
-  --secondary: #4A4560;
-  --secondary-foreground: #C5A3FF;
-  --muted: #4A4560;
-  --muted-foreground: #B0BEC5;
-  --accent: #4A4560;
-  --accent-foreground: #C2FFDF;
-  --destructive: #F92672;
-  --border: #5A5570;
-  --input: #5A5570;
-  --ring: #C5A3FF;
+  --background: #433e56;
+  --foreground: #f8f8f2;
+  --card: #3a3550;
+  --card-foreground: #f8f8f2;
+  --popover: #3a3550;
+  --popover-foreground: #f8f8f2;
+  --primary: #ffb8d1;
+  --primary-foreground: #3a3550;
+  --secondary: #4a4560;
+  --secondary-foreground: #c5a3ff;
+  --muted: #4a4560;
+  --muted-foreground: #b0bec5;
+  --accent: #4a4560;
+  --accent-foreground: #c2ffdf;
+  --destructive: #f92672;
+  --border: #5a5570;
+  --input: #5a5570;
+  --ring: #c5a3ff;
 }
 
 @layer base {
@@ -104,7 +104,12 @@
     @apply bg-background text-foreground;
     font-family: var(--font-sans);
   }
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-display);
   }
 }
@@ -118,15 +123,15 @@
     font-family: var(--font-mono);
   }
   .text-brown {
-    color: #3E2723;
+    color: #3e2723;
   }
   .text-brown-muted {
-    color: #8D6E63;
+    color: #8d6e63;
   }
 
   .cutekey-scrollbar {
     scrollbar-width: thin;
-    scrollbar-color: #F4A5B5 #FFF5EB;
+    scrollbar-color: #f4a5b5 #fff5eb;
   }
 
   .cutekey-scrollbar::-webkit-scrollbar {
@@ -134,34 +139,34 @@
   }
 
   .cutekey-scrollbar::-webkit-scrollbar-track {
-    background: linear-gradient(180deg, #FFF8F2 0%, #FFF1F2 100%);
+    background: linear-gradient(180deg, #fff8f2 0%, #fff1f2 100%);
     border-radius: 999px;
   }
 
   .cutekey-scrollbar::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #F8B4C0 0%, #F43F5E 100%);
-    border: 2px solid #FFF8F2;
+    background: linear-gradient(180deg, #f8b4c0 0%, #f43f5e 100%);
+    border: 2px solid #fff8f2;
     border-radius: 999px;
   }
 
   .cutekey-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, #FB7185 0%, #E11D48 100%);
+    background: linear-gradient(180deg, #fb7185 0%, #e11d48 100%);
   }
 
   .dark .cutekey-scrollbar {
-    scrollbar-color: #FFB8D1 #4A4560;
+    scrollbar-color: #ffb8d1 #4a4560;
   }
 
   .dark .cutekey-scrollbar::-webkit-scrollbar-track {
-    background: linear-gradient(180deg, #342F46 0%, #413C58 100%);
+    background: linear-gradient(180deg, #342f46 0%, #413c58 100%);
   }
 
   .dark .cutekey-scrollbar::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #FFB8D1 0%, #F472B6 100%);
-    border-color: #342F46;
+    background: linear-gradient(180deg, #ffb8d1 0%, #f472b6 100%);
+    border-color: #342f46;
   }
 
   .dark .cutekey-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, #FFC8DC 0%, #FB7185 100%);
+    background: linear-gradient(180deg, #ffc8dc 0%, #fb7185 100%);
   }
 }

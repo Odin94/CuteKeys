@@ -1,9 +1,9 @@
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence } from "motion/react";
 
 type ActionPromptProps = {
-  description: string
-  label: string
-}
+  description: string;
+  label: string;
+};
 
 export const ActionPrompt = ({ description, label }: ActionPromptProps) => (
   <AnimatePresence mode="wait">
@@ -15,10 +15,12 @@ export const ActionPrompt = ({ description, label }: ActionPromptProps) => (
       transition={{ duration: 0.25 }}
       className="text-center"
     >
-      <p className="text-sm font-semibold text-[#8D6E63] dark:text-[#B0BEC5] uppercase tracking-wide mb-2">{label}</p>
+      <p className="text-sm font-semibold text-[#8D6E63] dark:text-[#B0BEC5] uppercase tracking-wide mb-2">
+        {label}
+      </p>
       <h2 className="font-display font-black text-3xl text-[#3E2723] dark:text-[#F8F8F2] leading-tight">
         {description}
       </h2>
     </motion.div>
   </AnimatePresence>
-)
+);

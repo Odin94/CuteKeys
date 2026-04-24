@@ -1,8 +1,8 @@
-import { Link } from '@tanstack/react-router'
-import { motion } from 'motion/react'
-import { Settings } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { ThemeToggle } from './theme-toggle'
+import { Link } from "@tanstack/react-router";
+import { motion } from "motion/react";
+import { Settings } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "./theme-toggle";
 
 export const Header = () => (
   <header className="sticky top-0 z-50 border-b border-[#F5E6D8] dark:border-[#5A5570] bg-[#FFFBF5]/90 dark:bg-[#433E56]/90 backdrop-blur-sm">
@@ -15,17 +15,23 @@ export const Header = () => (
         >
           ⌨️
         </motion.div>
-        <span className="font-display font-black text-xl text-[#F43F5E] dark:text-[#FFB8D1]">CuteKey</span>
+        <span className="font-display font-black text-xl text-[#F43F5E] dark:text-[#FFB8D1]">
+          CuteKey
+        </span>
       </Link>
 
       <div className="flex items-center gap-1">
         <ThemeToggle />
         <Link to="/settings">
-          <Button variant="ghost" size="icon" className="rounded-xl text-[#8D6E63] dark:text-[#B0BEC5] hover:text-[#3E2723] dark:hover:text-[#F8F8F2] hover:bg-[#FFF5EB] dark:hover:bg-[#4A4560] cursor-pointer">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-xl text-[#8D6E63] dark:text-[#B0BEC5] hover:text-[#3E2723] dark:hover:text-[#F8F8F2] hover:bg-[#FFF5EB] dark:hover:bg-[#4A4560] cursor-pointer"
+          >
             <Settings className="h-5 w-5" />
           </Button>
         </Link>
       </div>
     </div>
   </header>
-)
+);

@@ -1,10 +1,10 @@
 type ProgressBarProps = {
-  current: number
-  total: number
-}
+  current: number;
+  total: number;
+};
 
 export const ProgressBar = ({ current, total }: ProgressBarProps) => {
-  const pct = (current / total) * 100
+  const pct = (current / total) * 100;
 
   return (
     <div className="flex items-center gap-3">
@@ -18,5 +18,5 @@ export const ProgressBar = ({ current, total }: ProgressBarProps) => {
         {current}/{total}
       </span>
     </div>
-  )
-}
+  );
+};

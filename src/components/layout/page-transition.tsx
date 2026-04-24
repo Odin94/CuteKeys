@@ -1,18 +1,16 @@
-import { AnimatePresence } from 'motion/react'
-import { useLocation } from '@tanstack/react-router'
+import { AnimatePresence } from "motion/react";
+import { useLocation } from "@tanstack/react-router";
 
 type PageTransitionProps = {
-  children: React.ReactNode
-}
+  children: React.ReactNode;
+};
 
 export const PageTransition = ({ children }: PageTransitionProps) => {
-  const location = useLocation()
+  const location = useLocation();
 
   return (
     <AnimatePresence mode="wait">
-      <div key={location.pathname}>
-        {children}
-      </div>
+      <div key={location.pathname}>{children}</div>
     </AnimatePresence>
-  )
-}
+  );
+};

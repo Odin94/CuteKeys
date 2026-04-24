@@ -32,6 +32,24 @@ The output is written to `dist/`. To preview the production build locally:
 npm run preview
 ```
 
+### Lint and format
+
+This project uses `oxlint` for linting and `oxfmt` for formatting.
+
+```bash
+npm run lint
+npm run lint:fix
+npm run format
+npm run format:check
+```
+
+Typical local workflow:
+
+```bash
+npm run format
+npm run lint
+```
+
 ## Screenshots
 
 See [SCREENSHOTS.md](./SCREENSHOTS.md) for the full guide on adding before/after screenshot pairs for hotkeys. Screenshots go in `public/screenshots/{appId}/{setSlug}/` as WebP files. Placeholder SVGs are generated automatically for any missing screenshots so the app works without them.

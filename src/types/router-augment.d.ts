@@ -1,8 +1,8 @@
-import type { TrainingSessionState } from './session'
+import type { TrainingSessionState } from "./session";
 
-declare module '@tanstack/history' {
+declare module "@tanstack/history" {
   interface HistoryState {
-    session?: TrainingSessionState
-    entryId?: string
+    session?: TrainingSessionState;
+    entryId?: string;
   }
 }

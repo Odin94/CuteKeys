@@ -1,10 +1,10 @@
-import { motion, AnimatePresence } from 'motion/react'
-import { Flame } from 'lucide-react'
+import { motion, AnimatePresence } from "motion/react";
+import { Flame } from "lucide-react";
 
 type ScoreDisplayProps = {
-  score: number
-  streak: number
-}
+  score: number;
+  streak: number;
+};
 
 export const ScoreDisplay = ({ score, streak }: ScoreDisplayProps) => (
   <div className="flex items-center gap-4">
@@ -25,7 +25,7 @@ export const ScoreDisplay = ({ score, streak }: ScoreDisplayProps) => (
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0, opacity: 0 }}
-          transition={{ type: 'spring', bounce: 0.5 }}
+          transition={{ type: "spring", bounce: 0.5 }}
           className="flex items-center gap-1 bg-[#FFF7ED] dark:bg-[#4A3E30] border border-[#FB923C]/30 rounded-full px-2 py-0.5"
         >
           <Flame className="h-3.5 w-3.5 text-[#FB923C]" />
@@ -34,4 +34,4 @@ export const ScoreDisplay = ({ score, streak }: ScoreDisplayProps) => (
       )}
     </AnimatePresence>
   </div>
-)
+);

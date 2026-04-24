@@ -1,30 +1,30 @@
-import { useState, useCallback } from 'react'
-import { getAppStats, toggleExcludeHotkey, updatePerformance } from '@/lib/storage'
-import type { AppStats } from '@/types/stats'
-import type { HotkeyAttempt } from '@/types/session'
+import { useState, useCallback } from "react";
+import { getAppStats, toggleExcludeHotkey, updatePerformance } from "@/lib/storage";
+import type { AppStats } from "@/types/stats";
+import type { HotkeyAttempt } from "@/types/session";
 
 export function useStats(appId: string) {
-  const [stats, setStats] = useState<AppStats>(() => getAppStats(appId))
+  const [stats, setStats] = useState<AppStats>(() => getAppStats(appId));
 
   const refresh = useCallback(() => {
-    setStats(getAppStats(appId))
-  }, [appId])
+    setStats(getAppStats(appId));
+  }, [appId]);
 
   const saveAttempts = useCallback(
     (attempts: HotkeyAttempt[]) => {
-      updatePerformance(appId, attempts)
-      refresh()
+      updatePerformance(appId, attempts);
+      refresh();
     },
-    [appId, refresh]
-  )
+    [appId, refresh],
+  );
 
   const toggleExclude = useCallback(
     (hotkeyId: string) => {
-      toggleExcludeHotkey(appId, hotkeyId)
-      refresh()
+      toggleExcludeHotkey(appId, hotkeyId);
+      refresh();
     },
-    [appId, refresh]
-  )
+    [appId, refresh],
+  );
 
-  return { stats, saveAttempts, toggleExclude, refresh }
+  return { stats, saveAttempts, toggleExclude, refresh };
 }

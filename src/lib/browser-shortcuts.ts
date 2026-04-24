@@ -1,4 +1,4 @@
-import type { KeyCombo } from '@/types/hotkey'
+import type { KeyCombo } from "@/types/hotkey";
 
 /**
  * Browser-reserved combos in data format.
@@ -8,23 +8,21 @@ import type { KeyCombo } from '@/types/hotkey'
  * don't support it at all.
  */
 const BROWSER_RESERVED: KeyCombo[] = [
-  { modifiers: ['primary'], key: 't' },
-  { modifiers: ['primary', 'shift'], key: 't' },
-  { modifiers: ['primary'], key: 'w' },
-  { modifiers: ['primary', 'shift'], key: 'w' },
-  { modifiers: ['primary'], key: 'n' },
-  { modifiers: ['primary', 'shift'], key: 'n' },
-  { modifiers: ['primary'], key: 'tab' },
-  { modifiers: ['primary', 'shift'], key: 'tab' },
-  { modifiers: ['primary'], key: 'f' },
-  { modifiers: ['primary'], key: 'o' },
-  { modifiers: ['ctrl'], key: 'l' },
-]
+  { modifiers: ["primary"], key: "t" },
+  { modifiers: ["primary", "shift"], key: "t" },
+  { modifiers: ["primary"], key: "w" },
+  { modifiers: ["primary", "shift"], key: "w" },
+  { modifiers: ["primary"], key: "n" },
+  { modifiers: ["primary", "shift"], key: "n" },
+  { modifiers: ["primary"], key: "tab" },
+  { modifiers: ["primary", "shift"], key: "tab" },
+  { modifiers: ["primary"], key: "f" },
+  { modifiers: ["primary"], key: "o" },
+  { modifiers: ["ctrl"], key: "l" },
+];
 
 export const isBrowserReserved = (combo: KeyCombo): boolean => {
-  const key = combo.key.toLowerCase()
-  const mods = [...combo.modifiers].sort().join(',')
-  return BROWSER_RESERVED.some(
-    (r) => r.key === key && [...r.modifiers].sort().join(',') === mods
-  )
-}
+  const key = combo.key.toLowerCase();
+  const mods = [...combo.modifiers].sort().join(",");
+  return BROWSER_RESERVED.some((r) => r.key === key && [...r.modifiers].sort().join(",") === mods);
+};

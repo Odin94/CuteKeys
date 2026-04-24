@@ -1,7 +1,7 @@
-import { HeroSection } from '@/components/home/hero-section'
-import { AppCard } from '@/components/home/app-card'
-import { apps } from '@/data/apps'
-import { PageWrapper } from '@/components/layout/page-wrapper'
+import { HeroSection } from "@/components/home/hero-section";
+import { AppCard } from "@/components/home/app-card";
+import { apps } from "@/data/apps";
+import { PageWrapper } from "@/components/layout/page-wrapper";
 
 export const HomePage = () => (
   <PageWrapper>
@@ -14,4 +14,4 @@ export const HomePage = () => (
       </div>
     </div>
   </PageWrapper>
-)
+);
