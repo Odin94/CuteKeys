@@ -11,6 +11,7 @@ import { isBrowserReserved } from "@/lib/browser-shortcuts";
 import { isFocusModeSupported } from "@/hooks/use-keyboard-lock";
 import { getTrainableHotkeys, setHasOverrides } from "@/lib/hotkey-overrides";
 import type { HotkeySetOverrides } from "@/types/hotkey";
+import { ZedKeymapImportButton } from "@/components/setup/zed-keymap-import-button";
 
 export const SetSelectionPage = () => {
   const { appId } = useParams({ from: "/app/$appId/" });
@@ -80,6 +81,16 @@ export const SetSelectionPage = () => {
             </p>
           </div>
           <div className="ml-auto flex gap-2">
+            {appId === "zed" ? (
+              <ZedKeymapImportButton
+                app={app}
+                currentOverrides={overrides}
+                onImported={(next) => {
+                  setOverrides(next);
+                  saveHotkeyOverrides(appId, next);
+                }}
+              />
+            ) : null}
             <Link to="/app/$appId/dashboard" params={{ appId }}>
               <Button
                 variant="outline"

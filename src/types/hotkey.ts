@@ -13,6 +13,8 @@ export interface HotkeyEntry {
   screenshotBefore: string; // path relative to /public, e.g. /screenshots/cursor/navigation/open-file-before.webp
   screenshotAfter: string;
   difficulty: "easy" | "medium" | "hard";
+  /** Zed action name (e.g. "editor::SelectNext") — used when importing a Zed keymap.json */
+  zedAction?: string;
 }
 
 export interface HotkeySet {
