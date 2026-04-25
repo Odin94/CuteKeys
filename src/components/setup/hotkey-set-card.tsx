@@ -1,8 +1,8 @@
 import { motion, AnimatePresence } from "motion/react";
 import { Check, ChevronDown, Settings2, Sparkles, TriangleAlert } from "lucide-react";
 import type { HotkeySet, HotkeySetOverrides } from "@/types/hotkey";
-import { toDisplayString } from "@/lib/hotkey-utils";
-import { isBrowserReserved } from "@/lib/browser-shortcuts";
+import { chordToDisplayString, getChordSteps } from "@/lib/hotkey-utils";
+import { chordHasBrowserReserved } from "@/lib/browser-shortcuts";
 import { cn } from "@/lib/cn";
 import { useState } from "react";
 import { HotkeySetSettingsDialog } from "./hotkey-set-settings-dialog";
@@ -37,7 +37,7 @@ export const HotkeySetCard = ({
   const displaySet = applyOverridesToSet(set, { [set.id]: overrides ?? {} });
 
   const reservedIds = new Set(
-    displaySet.hotkeys.filter((h) => isBrowserReserved(h.keys)).map((h) => h.id),
+    displaySet.hotkeys.filter((h) => chordHasBrowserReserved(getChordSteps(h))).map((h) => h.id),
   );
   const hasConflicts = reservedIds.size > 0;
 
@@ -174,7 +174,7 @@ export const HotkeySetCard = ({
                             />
                           ) : null}
                           <kbd className="font-mono text-xs px-2 py-1 rounded-lg bg-[#FFF5EB] dark:bg-[#4A4560] border border-[#F5E6D8] dark:border-[#5A5570] text-[#3E2723] dark:text-[#F8F8F2]">
-                            {toDisplayString(hotkey.keys)}
+                            {chordToDisplayString(getChordSteps(hotkey))}
                           </kbd>
                         </div>
                       </div>

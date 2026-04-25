@@ -7,7 +7,8 @@ import { HotkeySetCard } from "@/components/setup/hotkey-set-card";
 import { Button } from "@/components/ui/button";
 import { getAppStats, getHotkeyOverrides, saveHotkeyOverrides } from "@/lib/storage";
 import { PageWrapper } from "@/components/layout/page-wrapper";
-import { isBrowserReserved } from "@/lib/browser-shortcuts";
+import { chordHasBrowserReserved } from "@/lib/browser-shortcuts";
+import { getChordSteps } from "@/lib/hotkey-utils";
 import { isFocusModeSupported } from "@/hooks/use-keyboard-lock";
 import { getTrainableHotkeys, setHasOverrides } from "@/lib/hotkey-overrides";
 import type { HotkeySetOverrides } from "@/types/hotkey";
@@ -50,7 +51,7 @@ export const SetSelectionPage = () => {
     .reduce((sum, s) => sum + getTrainableHotkeys(s, overrides, stats).length, 0);
 
   const anySetHasConflicts = app.sets.some((s) =>
-    getTrainableHotkeys(s, overrides, stats).some((h) => isBrowserReserved(h.keys)),
+    getTrainableHotkeys(s, overrides, stats).some((h) => chordHasBrowserReserved(getChordSteps(h))),
   );
 
   const startTraining = () => {

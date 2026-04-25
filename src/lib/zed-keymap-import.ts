@@ -81,7 +81,7 @@ export function parseZedKeymap(source: string): unknown {
 /** Parse a single Zed keystroke like "cmd-shift-p". Returns null if not representable. */
 export function parseZedKeystroke(raw: string): KeyCombo | null {
   const trimmed = raw.trim().toLowerCase();
-  if (!trimmed || trimmed.includes(" ")) return null; // multi-step keystrokes not supported
+  if (!trimmed || trimmed.includes(" ")) return null; // single-step only
   const parts = trimmed.split("-").filter(Boolean);
   if (parts.length === 0) return null;
 
@@ -105,6 +105,22 @@ export function parseZedKeystroke(raw: string): KeyCombo | null {
 
   if (!key) return null;
   return { modifiers: [...new Set(modifiers)].sort(), key };
+}
+
+/**
+ * Parse a Zed keystroke sequence like "cmd-k cmd-z" into an ordered list of combos.
+ * Returns null if any step is unrepresentable.
+ */
+export function parseZedKeystrokeSequence(raw: string): KeyCombo[] | null {
+  const steps = raw.trim().split(/\s+/).filter(Boolean);
+  if (steps.length === 0) return null;
+  const combos: KeyCombo[] = [];
+  for (const step of steps) {
+    const combo = parseZedKeystroke(step);
+    if (!combo) return null;
+    combos.push(combo);
+  }
+  return combos;
 }
 
 type RawBinding = {
@@ -162,8 +178,11 @@ export function buildZedOverrides(
         continue;
       }
 
-      const combo = parseZedKeystroke(keystroke);
-      if (!combo) continue;
+      const sequence = parseZedKeystrokeSequence(keystroke);
+      if (!sequence) continue;
+
+      const finalCombo = sequence[sequence.length - 1];
+      const prefix = sequence.length > 1 ? sequence.slice(0, -1) : undefined;
 
       for (const target of targets) {
         const dedupeKey = `${target.setId}:${target.hotkey.id}`;
@@ -173,7 +192,8 @@ export function buildZedOverrides(
         if (!overrides[target.setId]) overrides[target.setId] = {};
         overrides[target.setId][target.hotkey.id] = {
           enabled: true,
-          keys: combo,
+          keys: finalCombo,
+          ...(prefix ? { prefix } : {}),
         };
         matched++;
       }

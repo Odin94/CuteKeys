@@ -11,7 +11,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { eventToKeyCombo, keyCombosEqual, toDisplayString } from "@/lib/hotkey-utils";
+import {
+  chordToDisplayString,
+  eventToKeyCombo,
+  getChordSteps,
+  keyCombosEqual,
+  toDisplayString,
+} from "@/lib/hotkey-utils";
 import { cn } from "@/lib/cn";
 
 type HotkeySetSettingsDialogProps = {
@@ -261,10 +267,12 @@ export const HotkeySetSettingsDialog = ({
 
                         <div className="mt-3 flex flex-wrap items-center gap-2">
                           <kbd className="rounded-xl border border-[#F5E6D8] dark:border-[#5A5570] bg-[#FFF5EB] dark:bg-[#4A4560] px-3 py-1.5 font-mono text-xs text-[#3E2723] dark:text-[#F8F8F2]">
-                            {toDisplayString(effectiveCombo)}
+                            {isCustom
+                              ? toDisplayString(effectiveCombo)
+                              : chordToDisplayString(getChordSteps(hotkey))}
                           </kbd>
                           <span className="text-xs text-[#8D6E63] dark:text-[#B0BEC5]">
-                            Default: {toDisplayString(hotkey.keys)}
+                            Default: {chordToDisplayString(getChordSteps(hotkey))}
                           </span>
                         </div>
 

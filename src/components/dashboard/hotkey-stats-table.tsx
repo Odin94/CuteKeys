@@ -2,7 +2,7 @@ import { motion } from "motion/react";
 import { EyeOff, Eye } from "lucide-react";
 import type { HotkeyEntry } from "@/types/hotkey";
 import type { HotkeyPerformance } from "@/types/stats";
-import { toDisplayString } from "@/lib/hotkey-utils";
+import { chordToDisplayString, getChordSteps } from "@/lib/hotkey-utils";
 import { Button } from "@/components/ui/button";
 
 type HotkeyStatsTableProps = {
@@ -57,7 +57,7 @@ export const HotkeyStatsTable = ({
               {hotkey.label}
             </p>
             <kbd className="font-mono text-xs text-[#8D6E63] dark:text-[#B0BEC5]">
-              {toDisplayString(hotkey.keys)}
+              {chordToDisplayString(getChordSteps(hotkey))}
             </kbd>
           </div>
 

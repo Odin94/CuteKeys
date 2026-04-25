@@ -3,6 +3,8 @@ import type { KeyCombo, ModifierKey } from "@/types/hotkey";
 import { eventToKeyCombo, isBareModifier, keyCombosMatch } from "@/lib/hotkey-utils";
 
 const STAGE_WINDOW_MS = 3000;
+/** Max time a user has between steps of a multi-step chord before progress resets. */
+const STEP_WINDOW_MS = 1500;
 
 const keyToModifier = (key: string): ModifierKey | null => {
   switch (key) {
@@ -20,14 +22,15 @@ const keyToModifier = (key: string): ModifierKey | null => {
 };
 
 type UseHotkeyCaptureOptions = {
-  expectedCombo: KeyCombo | null;
+  /** Full ordered chord. Length 1 = single combo, >1 = multi-step. Null = nothing expected. */
+  expectedSteps: KeyCombo[] | null;
   enabled: boolean;
   onMatch: () => void;
   onMismatch: (pressed: KeyCombo) => void;
 };
 
 export const useHotkeyCapture = ({
-  expectedCombo,
+  expectedSteps,
   enabled,
   onMatch,
   onMismatch,
@@ -36,11 +39,22 @@ export const useHotkeyCapture = ({
   const [stagedModifiers, setStagedModifiers] = useState<ModifierKey[]>([]);
   const stagedRef = useRef<ModifierKey[]>([]);
   const stageTimeRef = useRef<number>(0);
+  const stepIndexRef = useRef<number>(0);
+  const lastStepTimeRef = useRef<number>(0);
+  const [chordStep, setChordStep] = useState<number>(0);
+
+  // Reset chord progress when the expected chord changes.
+  useEffect(() => {
+    stepIndexRef.current = 0;
+    setChordStep(0);
+  }, [expectedSteps]);
 
   useEffect(() => {
     if (!enabled) {
       stagedRef.current = [];
       setStagedModifiers([]);
+      stepIndexRef.current = 0;
+      setChordStep(0);
       return;
     }
 
@@ -73,21 +87,49 @@ export const useHotkeyCapture = ({
         return;
       }
 
+      // Reset partial chord progress if user took too long between steps.
+      if (
+        stepIndexRef.current > 0 &&
+        now - lastStepTimeRef.current > STEP_WINDOW_MS
+      ) {
+        stepIndexRef.current = 0;
+        setChordStep(0);
+      }
+
       const pressed = eventToKeyCombo(e);
 
       // Merge simultaneously-held modifiers with sequentially-staged modifiers.
-      // This lets users press e.g. Ctrl, then Shift, then T separately when the
-      // browser would intercept the simultaneous Ctrl+Shift+T combo.
       const effectiveMods = [...new Set([...pressed.modifiers, ...stagedRef.current])];
       const effectiveCombo: KeyCombo = { modifiers: effectiveMods, key: pressed.key };
 
       stagedRef.current = [];
       setStagedModifiers([]);
 
-      if (expectedCombo && keyCombosMatch(effectiveCombo, expectedCombo)) {
-        lastMatchTime.current = now;
-        onMatch();
+      const steps = expectedSteps;
+      if (!steps || steps.length === 0) {
+        onMismatch(pressed);
+        return;
+      }
+
+      const expectedAtStep = steps[stepIndexRef.current];
+      if (keyCombosMatch(effectiveCombo, expectedAtStep)) {
+        const isLast = stepIndexRef.current === steps.length - 1;
+        if (isLast) {
+          stepIndexRef.current = 0;
+          setChordStep(0);
+          lastMatchTime.current = now;
+          onMatch();
+        } else {
+          stepIndexRef.current += 1;
+          lastStepTimeRef.current = now;
+          setChordStep(stepIndexRef.current);
+        }
       } else {
+        // Mismatch — reset chord progress.
+        if (stepIndexRef.current > 0) {
+          stepIndexRef.current = 0;
+          setChordStep(0);
+        }
         onMismatch(pressed);
       }
     };
@@ -98,7 +140,7 @@ export const useHotkeyCapture = ({
       stagedRef.current = [];
       setStagedModifiers([]);
     };
-  }, [enabled, expectedCombo, onMatch, onMismatch]);
+  }, [enabled, expectedSteps, onMatch, onMismatch]);
 
-  return { stagedModifiers };
+  return { stagedModifiers, chordStep };
 };

@@ -10,6 +10,11 @@ export interface HotkeyEntry {
   label: string;
   description: string; // Action prompt shown to user: "Open the file search!"
   keys: KeyCombo;
+  /**
+   * Optional preceding chord steps for multi-step bindings (e.g. "cmd-k cmd-z").
+   * The user must press these in order before the final `keys` combo.
+   */
+  prefix?: KeyCombo[];
   screenshotBefore: string; // path relative to /public, e.g. /screenshots/cursor/navigation/open-file-before.webp
   screenshotAfter: string;
   difficulty: "easy" | "medium" | "hard";
@@ -28,6 +33,8 @@ export interface HotkeySet {
 export interface HotkeyOverride {
   enabled: boolean;
   keys: KeyCombo | null;
+  /** Preceding chord steps for multi-step bindings. Undefined = inherit from default. */
+  prefix?: KeyCombo[];
 }
 
 export type HotkeySetOverrides = Record<string, HotkeyOverride>;

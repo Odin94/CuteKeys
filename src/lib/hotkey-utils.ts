@@ -51,6 +51,19 @@ export function toDisplayString(combo: KeyCombo): string {
   return [...mods, key].join("+");
 }
 
+/** Returns the full ordered list of chord steps for a hotkey-like value. */
+export function getChordSteps(value: {
+  keys: KeyCombo;
+  prefix?: KeyCombo[];
+}): KeyCombo[] {
+  return [...(value.prefix ?? []), value.keys];
+}
+
+/** Pretty display string for a sequence of combos joined by spaces (e.g. "Cmd+K Cmd+Z"). */
+export function chordToDisplayString(steps: KeyCombo[]): string {
+  return steps.map(toDisplayString).join(" ");
+}
+
 function formatKey(key: string): string {
   const map: Record<string, string> = {
     arrowup: "Up",

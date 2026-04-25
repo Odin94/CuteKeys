@@ -4,10 +4,11 @@ import { HotkeyDisplay } from "./hotkey-display";
 
 type FailRevealProps = {
   combo: KeyCombo;
+  prefix?: KeyCombo[];
   onSkip?: () => void;
 };
 
-export const FailReveal = ({ combo, onSkip }: FailRevealProps) => (
+export const FailReveal = ({ combo, prefix, onSkip }: FailRevealProps) => (
   <motion.div
     initial={{ x: 0 }}
     animate={{ x: [-8, 8, -6, 6, -3, 3, 0] }}
@@ -15,7 +16,7 @@ export const FailReveal = ({ combo, onSkip }: FailRevealProps) => (
     className="text-center py-4"
   >
     <p className="text-cutekey-peach font-semibold mb-3">Time's up! Here's the hotkey:</p>
-    <HotkeyDisplay combo={combo} variant="reveal" />
+    <HotkeyDisplay combo={combo} prefix={prefix} variant="reveal" />
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}

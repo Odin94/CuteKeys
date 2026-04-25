@@ -2,7 +2,7 @@ import { motion } from "motion/react";
 import { Check, X } from "lucide-react";
 import type { HotkeyAttempt } from "@/types/session";
 import type { HotkeyEntry } from "@/types/hotkey";
-import { toDisplayString } from "@/lib/hotkey-utils";
+import { chordToDisplayString, getChordSteps } from "@/lib/hotkey-utils";
 
 type HotkeyResultsListProps = {
   attempts: HotkeyAttempt[];
@@ -45,7 +45,7 @@ export const HotkeyResultsList = ({ attempts, hotkeys }: HotkeyResultsListProps)
                   {hotkey.label}
                 </p>
                 <kbd className="font-mono text-xs text-[#8D6E63] dark:text-[#B0BEC5]">
-                  {toDisplayString(hotkey.keys)}
+                  {chordToDisplayString(getChordSteps(hotkey))}
                 </kbd>
               </div>
             </div>

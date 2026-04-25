@@ -11,6 +11,7 @@ export function applyOverridesToSet(set: HotkeySet, overrides: AppHotkeyOverride
       return {
         ...hotkey,
         keys: override?.keys ?? hotkey.keys,
+        prefix: override?.keys ? override.prefix : hotkey.prefix,
       };
     }),
   };
@@ -47,6 +48,7 @@ export function getTrainableHotkeys(
       return {
         ...hotkey,
         keys: override?.keys ?? hotkey.keys,
+        prefix: override?.keys ? override.prefix : hotkey.prefix,
       };
     })
     .filter((hotkey) => isHotkeyEnabled(appStats, hotkey.id, setOverrides[hotkey.id]));

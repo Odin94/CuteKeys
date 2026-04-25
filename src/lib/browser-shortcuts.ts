@@ -26,3 +26,7 @@ export const isBrowserReserved = (combo: KeyCombo): boolean => {
   const mods = [...combo.modifiers].sort().join(",");
   return BROWSER_RESERVED.some((r) => r.key === key && [...r.modifiers].sort().join(",") === mods);
 };
+
+/** True if any step in a chord is browser-reserved. */
+export const chordHasBrowserReserved = (steps: KeyCombo[]): boolean =>
+  steps.some(isBrowserReserved);

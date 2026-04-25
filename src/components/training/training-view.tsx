@@ -14,9 +14,10 @@ import { CountdownRing } from "./countdown-ring";
 import { SuccessCelebration } from "./success-celebration";
 import { FailReveal } from "./fail-reveal";
 import { getAppStats, getHotkeyOverrides, getSettings } from "@/lib/storage";
-import { isBrowserReserved } from "@/lib/browser-shortcuts";
+import { chordHasBrowserReserved } from "@/lib/browser-shortcuts";
 import { modifierLabel } from "@/lib/platform";
 import { getTrainableHotkeys } from "@/lib/hotkey-overrides";
+import { getChordSteps, toDisplayString } from "@/lib/hotkey-utils";
 
 type TrainingViewProps = {
   app: AppDefinition;
@@ -112,8 +113,10 @@ export const TrainingView = ({ app, selectedSetIds, onFinish }: TrainingViewProp
     }
   }, [state.phase, currentHotkey, handleCorrectPress, handleCorrectPressDuringTimeout]);
 
-  const { stagedModifiers } = useHotkeyCapture({
-    expectedCombo: currentHotkey?.keys ?? null,
+  const expectedSteps = currentHotkey ? getChordSteps(currentHotkey) : null;
+
+  const { stagedModifiers, chordStep } = useHotkeyCapture({
+    expectedSteps,
     enabled: state.phase === "prompt" || state.phase === "timeout",
     onMatch: state.phase === "timeout" ? onMatchDuringTimeout : onMatch,
     onMismatch,
@@ -137,7 +140,7 @@ export const TrainingView = ({ app, selectedSetIds, onFinish }: TrainingViewProp
     );
   }
 
-  const isReserved = isBrowserReserved(currentHotkey.keys);
+  const isReserved = chordHasBrowserReserved(getChordSteps(currentHotkey));
   const showBrowserWarning = isReserved && !isLocked && state.phase === "prompt";
 
   const screenshotPhase =
@@ -220,6 +223,32 @@ export const TrainingView = ({ app, selectedSetIds, onFinish }: TrainingViewProp
 
               <ActionPrompt description={currentHotkey.description} label={app.name} />
 
+              {expectedSteps && expectedSteps.length > 1 ? (
+                <motion.div
+                  key={`chord-progress-${chordStep}`}
+                  initial={{ opacity: 0, y: -2 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center gap-2 text-xs text-cutekey-brown-muted dark:text-[#B0BEC5]"
+                >
+                  <span className="font-semibold">
+                    Step {Math.min(chordStep + 1, expectedSteps.length)} / {expectedSteps.length}
+                  </span>
+                  {chordStep > 0 ? (
+                    <span className="flex items-center gap-1">
+                      {expectedSteps.slice(0, chordStep).map((step, i) => (
+                        <kbd
+                          key={i}
+                          className="px-2 py-0.5 rounded-md bg-[#22C55E]/15 border border-[#22C55E]/40 text-[#15803D] dark:text-[#86EFAC] font-mono text-[11px]"
+                        >
+                          {toDisplayString(step)}
+                        </kbd>
+                      ))}
+                      <span className="opacity-60">— now press the next step</span>
+                    </span>
+                  ) : null}
+                </motion.div>
+              ) : null}
+
               {stagedModifiers.length > 0 ? (
                 <motion.div
                   key="staged"
@@ -271,7 +300,11 @@ export const TrainingView = ({ app, selectedSetIds, onFinish }: TrainingViewProp
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              <FailReveal combo={currentHotkey.keys} onSkip={handleSkip} />
+              <FailReveal
+                combo={currentHotkey.keys}
+                prefix={currentHotkey.prefix}
+                onSkip={handleSkip}
+              />
             </motion.div>
           )}
 

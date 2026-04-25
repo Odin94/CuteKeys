@@ -49,6 +49,7 @@ export const userSettingsSchema = z.object({
 export const hotkeyOverrideSchema = z.object({
   enabled: z.boolean(),
   keys: keyComboSchema.nullable(),
+  prefix: z.array(keyComboSchema).optional(),
 });
 
 export const hotkeySetOverridesSchema = z.record(hotkeyOverrideSchema);
