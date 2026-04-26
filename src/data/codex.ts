@@ -105,6 +105,32 @@ const codexApp: AppDefinition = {
       ],
     },
     {
+      id: "codex-font",
+      name: "Font Size",
+      description: "Tune readability without leaving the thread",
+      icon: "Pencil",
+      hotkeys: [
+        {
+          id: "codex-font-increase",
+          label: "Increase Font Size",
+          description: "Make the text bigger!",
+          keys: { modifiers: ["primary"], key: "=" },
+          screenshotBefore: "/screenshots/codex/font/increase-before.webp",
+          screenshotAfter: "/screenshots/codex/font/increase-after.webp",
+          difficulty: "easy",
+        },
+        {
+          id: "codex-font-decrease",
+          label: "Decrease Font Size",
+          description: "Make the text smaller!",
+          keys: { modifiers: ["primary"], key: "-" },
+          screenshotBefore: "/screenshots/codex/font/decrease-before.webp",
+          screenshotAfter: "/screenshots/codex/font/decrease-after.webp",
+          difficulty: "easy",
+        },
+      ],
+    },
+    {
       id: "codex-thread",
       name: "Thread",
       description: "Move between conversations without losing flow",
@@ -145,6 +171,15 @@ const codexApp: AppDefinition = {
           screenshotBefore: "/screenshots/codex/thread/next-before.webp",
           screenshotAfter: "/screenshots/codex/thread/next-after.webp",
           difficulty: "medium",
+        },
+        {
+          id: "codex-thread-new-alt",
+          label: "New Thread (Alt)",
+          description: "Start a new thread the secondary way!",
+          keys: { modifiers: ["primary", "shift"], key: "o" },
+          screenshotBefore: "/screenshots/codex/thread/new-thread-alt-before.webp",
+          screenshotAfter: "/screenshots/codex/thread/new-thread-alt-after.webp",
+          difficulty: "hard",
         },
         {
           id: "codex-thread-dictation",
