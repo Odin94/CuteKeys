@@ -49,6 +49,28 @@ export const SettingsPage = () => {
             className="bg-white dark:bg-[#3A3550] rounded-2xl border border-[#F5E6D8] dark:border-[#5A5570] p-5"
           >
             <label className="font-semibold text-[#3E2723] dark:text-[#F8F8F2] block mb-1">
+              Display Name
+            </label>
+            <p className="text-sm text-[#8D6E63] dark:text-[#B0BEC5] mb-3">
+              Shown on the leaderboard. Will appear globally once syncing ships.
+            </p>
+            <input
+              type="text"
+              value={settings.userName}
+              maxLength={32}
+              onChange={(e) => update("userName", e.target.value)}
+              placeholder="Pick a name…"
+              className="w-full px-3 py-2 rounded-xl bg-[#FFF5EB] dark:bg-[#4A4560] border border-[#F5E6D8] dark:border-[#5A5570] text-[#3E2723] dark:text-[#F8F8F2] text-sm focus:outline-none focus:border-[#F43F5E]"
+            />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.025 }}
+            className="bg-white dark:bg-[#3A3550] rounded-2xl border border-[#F5E6D8] dark:border-[#5A5570] p-5"
+          >
+            <label className="font-semibold text-[#3E2723] dark:text-[#F8F8F2] block mb-1">
               Countdown Duration
             </label>
             <p className="text-sm text-[#8D6E63] dark:text-[#B0BEC5] mb-3">

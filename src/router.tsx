@@ -6,7 +6,7 @@ import {
   Outlet,
 } from "@tanstack/react-router";
 import { appsById } from "@/data/apps";
-import { trainSearchSchema } from "@/types/schemas";
+import { leaderboardSearchSchema, trainSearchSchema } from "@/types/schemas";
 import { RootLayout } from "@/routes/__root";
 import { HomePage } from "@/routes/index";
 import { SettingsPage } from "@/routes/settings";
@@ -14,6 +14,8 @@ import { SetSelectionPage } from "@/routes/app/$appId/index";
 import { DashboardPage } from "@/routes/app/$appId/dashboard";
 import { TrainPage } from "@/routes/app/$appId/train";
 import { ResultsPage } from "@/routes/app/$appId/results";
+import { ChallengePage } from "@/routes/app/$appId/challenge";
+import { LeaderboardPage } from "@/routes/app/$appId/leaderboard";
 
 const rootRoute = createRootRoute({ component: RootLayout });
 
@@ -65,6 +67,19 @@ const appIdResultsRoute = createRoute({
   component: ResultsPage,
 });
 
+const appIdChallengeRoute = createRoute({
+  getParentRoute: () => appIdRoute,
+  path: "challenge",
+  component: ChallengePage,
+});
+
+const appIdLeaderboardRoute = createRoute({
+  getParentRoute: () => appIdRoute,
+  path: "leaderboard",
+  validateSearch: leaderboardSearchSchema,
+  component: LeaderboardPage,
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   settingsRoute,
@@ -73,6 +88,8 @@ const routeTree = rootRoute.addChildren([
     appIdDashboardRoute,
     appIdTrainRoute,
     appIdResultsRoute,
+    appIdChallengeRoute,
+    appIdLeaderboardRoute,
   ]),
 ]);
 

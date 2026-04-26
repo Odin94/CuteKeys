@@ -16,22 +16,31 @@ import { FailReveal } from "./fail-reveal";
 import { getAppStats, getHotkeyOverrides, getSettings } from "@/lib/storage";
 import { chordHasBrowserReserved } from "@/lib/browser-shortcuts";
 import { modifierLabel } from "@/lib/platform";
-import { getTrainableHotkeys } from "@/lib/hotkey-overrides";
+import { applyOverridesToSet, getTrainableHotkeys } from "@/lib/hotkey-overrides";
 import { getChordSteps, toDisplayString } from "@/lib/hotkey-utils";
 
 type TrainingViewProps = {
   app: AppDefinition;
   selectedSetIds: string[];
   onFinish: (state: ReturnType<typeof useTrainingSession>["state"]) => void;
+  /** Challenge Mode: include every hotkey, ignoring the user's exclusion list. */
+  challenge?: boolean;
 };
 
-export const TrainingView = ({ app, selectedSetIds, onFinish }: TrainingViewProps) => {
+export const TrainingView = ({
+  app,
+  selectedSetIds,
+  onFinish,
+  challenge = false,
+}: TrainingViewProps) => {
   const settings = getSettings();
   const stats = getAppStats(app.id);
   const overrides = getHotkeyOverrides(app.id);
   const hotkeys = app.sets
     .filter((s) => selectedSetIds.includes(s.id))
-    .flatMap((s) => getTrainableHotkeys(s, overrides, stats));
+    .flatMap((s) =>
+      challenge ? applyOverridesToSet(s, overrides).hotkeys : getTrainableHotkeys(s, overrides, stats),
+    );
 
   const {
     state,

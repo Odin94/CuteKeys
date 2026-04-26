@@ -1,11 +1,17 @@
 import { useNavigate, useParams, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { ArrowLeft, Play, Maximize2, TriangleAlert } from "lucide-react";
+import { ArrowLeft, Play, Maximize2, TriangleAlert, Trophy, Zap } from "lucide-react";
 import { appsById } from "@/data/apps";
 import { HotkeySetCard } from "@/components/setup/hotkey-set-card";
 import { Button } from "@/components/ui/button";
-import { getAppStats, getHotkeyOverrides, saveHotkeyOverrides } from "@/lib/storage";
+import {
+  getAppStats,
+  getBestChallengeRun,
+  getCurrentUser,
+  getHotkeyOverrides,
+  saveHotkeyOverrides,
+} from "@/lib/storage";
 import { PageWrapper } from "@/components/layout/page-wrapper";
 import { chordHasBrowserReserved } from "@/lib/browser-shortcuts";
 import { getChordSteps } from "@/lib/hotkey-utils";
@@ -21,6 +27,9 @@ export const SetSelectionPage = () => {
   const stats = getAppStats(appId);
   const focusModeSupported = isFocusModeSupported();
   const [overrides, setOverrides] = useState(() => getHotkeyOverrides(appId));
+  const me = getCurrentUser();
+  const bestRun = getBestChallengeRun(appId, me.userId);
+  const totalAppHotkeys = app.sets.reduce((sum, s) => sum + s.hotkeys.length, 0);
 
   const [selectedSetIds, setSelectedSetIds] = useState<Set<string>>(new Set());
 
@@ -81,7 +90,7 @@ export const SetSelectionPage = () => {
               Pick the hotkey sets you want to practice
             </p>
           </div>
-          <div className="ml-auto flex gap-2">
+          <div className="ml-auto flex gap-2 flex-wrap justify-end">
             {appId === "zed" ? (
               <ZedKeymapImportButton
                 app={app}
@@ -92,6 +101,16 @@ export const SetSelectionPage = () => {
                 }}
               />
             ) : null}
+            <Link to="/app/$appId/leaderboard" params={{ appId }}>
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-xl border-[#F5E6D8] dark:border-[#5A5570] text-[#8D6E63] dark:text-[#B0BEC5] gap-1.5 cursor-pointer"
+              >
+                <Trophy className="h-3.5 w-3.5" />
+                Leaderboard
+              </Button>
+            </Link>
             <Link to="/app/$appId/dashboard" params={{ appId }}>
               <Button
                 variant="outline"
@@ -103,6 +122,39 @@ export const SetSelectionPage = () => {
             </Link>
           </div>
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="mb-5 rounded-2xl border-2 border-[#F43F5E]/30 bg-gradient-to-br from-[#FFF1F2] to-[#FFF8F2] dark:from-[#4A3E56] dark:to-[#3A3550] p-5 flex items-center gap-4"
+        >
+          <div className="w-11 h-11 rounded-2xl bg-[#F43F5E] text-white flex items-center justify-center shrink-0 shadow-lg shadow-[#F43F5E]/30">
+            <Trophy className="h-5 w-5" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="font-display font-bold text-[#3E2723] dark:text-[#F8F8F2]">
+              Challenge Mode
+            </p>
+            <p className="text-xs text-[#8D6E63] dark:text-[#B0BEC5]">
+              Run through all {totalAppHotkeys} {app.name} hotkeys for your overall score.{" "}
+              {bestRun ? (
+                <span className="font-semibold text-[#F43F5E] dark:text-[#FFB8D1]">
+                  Your best: {bestRun.score.toLocaleString()}
+                </span>
+              ) : (
+                <span>No score yet — give it a shot!</span>
+              )}
+            </p>
+          </div>
+          <button
+            onClick={() => navigate({ to: "/app/$appId/challenge", params: { appId } })}
+            className="shrink-0 inline-flex items-center gap-2 bg-[#F43F5E] hover:bg-[#E11D48] text-white font-display font-bold px-4 py-2 rounded-xl shadow-md shadow-[#F43F5E]/30 transition-colors cursor-pointer"
+          >
+            <Zap className="h-4 w-4 fill-white" />
+            Start
+          </button>
+        </motion.div>
 
         {anySetHasConflicts ? (
           <div className="flex items-start gap-3 mb-5 px-4 py-3 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-sm">

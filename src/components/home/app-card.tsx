@@ -1,7 +1,8 @@
 import { motion } from "motion/react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Trophy } from "lucide-react";
 import type { AppDefinition } from "@/types/hotkey";
+import { getBestChallengeRun, getCurrentUser } from "@/lib/storage";
 
 type AppCardProps = {
   app: AppDefinition;
@@ -10,6 +11,8 @@ type AppCardProps = {
 
 export const AppCard = ({ app, index }: AppCardProps) => {
   const totalHotkeys = app.sets.reduce((sum, s) => sum + s.hotkeys.length, 0);
+  const me = getCurrentUser();
+  const bestRun = getBestChallengeRun(app.id, me.userId);
 
   return (
     <motion.div
@@ -38,7 +41,7 @@ export const AppCard = ({ app, index }: AppCardProps) => {
           <p className="text-[#8D6E63] dark:text-[#B0BEC5] text-sm mb-4">{app.tagline}</p>
 
           <div className="flex items-center justify-between">
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               <span
                 className="text-xs font-semibold px-2 py-1 rounded-full"
                 style={{ backgroundColor: `${app.accentColor}18`, color: app.accentColor }}
@@ -51,6 +54,15 @@ export const AppCard = ({ app, index }: AppCardProps) => {
               >
                 {totalHotkeys} hotkeys
               </span>
+              {bestRun ? (
+                <span
+                  title={`Your best Challenge score on ${app.name}`}
+                  className="text-xs font-semibold px-2 py-1 rounded-full bg-[#FEF3C7] text-[#B45309] dark:bg-[#4A3F1F] dark:text-[#FCD34D] flex items-center gap-1"
+                >
+                  <Trophy className="h-3 w-3" />
+                  {bestRun.score.toLocaleString()}
+                </span>
+              ) : null}
             </div>
             <motion.div
               className="text-[#8D6E63] dark:text-[#B0BEC5] group-hover:text-[#F43F5E] dark:group-hover:text-[#FFB8D1] transition-colors"
