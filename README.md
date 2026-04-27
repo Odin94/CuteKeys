@@ -7,7 +7,7 @@ A hotkey learning game for developer tools. CuteKey shows you before/after scree
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) v18 or later
-- pnpm
+- [pnpm](https://pnpm.io)
 
 ### Run in dev
 
