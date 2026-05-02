@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useHotkey } from "@tanstack/react-hotkeys";
+import type { RawHotkey } from "@tanstack/react-hotkeys";
 import type { KeyCombo, ModifierKey } from "@/types/hotkey";
 import { eventToKeyCombo, isBareModifier, keyCombosMatch } from "@/lib/hotkey-utils";
 
@@ -20,6 +22,15 @@ const keyToModifier = (key: string): ModifierKey | null => {
       return null;
   }
 };
+
+const keyComboToTanStackHotkey = (combo: KeyCombo): RawHotkey => ({
+  key: combo.key,
+  mod: combo.modifiers.includes("primary"),
+  ctrl: combo.modifiers.includes("ctrl"),
+  shift: combo.modifiers.includes("shift"),
+  alt: combo.modifiers.includes("alt"),
+  meta: combo.modifiers.includes("meta"),
+});
 
 type UseHotkeyCaptureOptions = {
   /** Full ordered chord. Length 1 = single combo, >1 = multi-step. Null = nothing expected. */
@@ -43,28 +54,78 @@ export const useHotkeyCapture = ({
   const lastStepTimeRef = useRef<number>(0);
   const [chordStep, setChordStep] = useState<number>(0);
 
-  // Reset chord progress when the expected chord changes.
-  useEffect(() => {
+  const currentExpectedStep = expectedSteps?.[chordStep] ?? null;
+  const tanStackHotkey = useMemo(
+    () => keyComboToTanStackHotkey(currentExpectedStep ?? { modifiers: [], key: "Unidentified" }),
+    [currentExpectedStep],
+  );
+
+  const resetChordProgress = useCallback(() => {
     stepIndexRef.current = 0;
     setChordStep(0);
-  }, [expectedSteps]);
+  }, []);
+
+  const handleMatchedStep = useCallback(
+    (now: number) => {
+      const steps = expectedSteps;
+      if (!steps || steps.length === 0) return;
+
+      const isLast = stepIndexRef.current === steps.length - 1;
+      if (isLast) {
+        resetChordProgress();
+        lastMatchTime.current = now;
+        onMatch();
+        return;
+      }
+
+      stepIndexRef.current += 1;
+      lastStepTimeRef.current = now;
+      setChordStep(stepIndexRef.current);
+    },
+    [expectedSteps, onMatch, resetChordProgress],
+  );
+
+  // Reset chord progress when the expected chord changes.
+  useEffect(() => {
+    resetChordProgress();
+  }, [expectedSteps, resetChordProgress]);
+
+  useHotkey(
+    tanStackHotkey,
+    (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const now = Date.now();
+      if (now - lastMatchTime.current < 100) return;
+
+      stagedRef.current = [];
+      setStagedModifiers([]);
+      handleMatchedStep(now);
+    },
+    {
+      enabled: enabled && currentExpectedStep !== null,
+      preventDefault: true,
+      stopPropagation: true,
+      ignoreInputs: false,
+    },
+  );
 
   useEffect(() => {
     if (!enabled) {
       stagedRef.current = [];
       setStagedModifiers([]);
-      stepIndexRef.current = 0;
-      setChordStep(0);
+      resetChordProgress();
       return;
     }
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-
       const now = Date.now();
 
       if (isBareModifier(e)) {
+        e.preventDefault();
+        e.stopPropagation();
+
         const mod = keyToModifier(e.key);
         if (mod && !stagedRef.current.includes(mod)) {
           const next = [...stagedRef.current, mod];
@@ -75,12 +136,13 @@ export const useHotkeyCapture = ({
         return;
       }
 
-      // Clear stale staged modifiers
+      // Clear stale staged modifiers.
       if (now - stageTimeRef.current > STAGE_WINDOW_MS) {
         stagedRef.current = [];
+        setStagedModifiers([]);
       }
 
-      // Debounce: ignore presses within 100ms of last match
+      // Debounce: ignore presses within 100ms of last match.
       if (now - lastMatchTime.current < 100) {
         stagedRef.current = [];
         setStagedModifiers([]);
@@ -88,17 +150,16 @@ export const useHotkeyCapture = ({
       }
 
       // Reset partial chord progress if user took too long between steps.
-      if (
-        stepIndexRef.current > 0 &&
-        now - lastStepTimeRef.current > STEP_WINDOW_MS
-      ) {
-        stepIndexRef.current = 0;
-        setChordStep(0);
+      if (stepIndexRef.current > 0 && now - lastStepTimeRef.current > STEP_WINDOW_MS) {
+        resetChordProgress();
       }
 
       const pressed = eventToKeyCombo(e);
 
       // Merge simultaneously-held modifiers with sequentially-staged modifiers.
+      // This lets users press e.g. Ctrl, then Shift, then T separately when the
+      // browser would intercept the simultaneous Ctrl+Shift+T combo.
+      const hadStagedModifiers = stagedRef.current.length > 0;
       const effectiveMods = [...new Set([...pressed.modifiers, ...stagedRef.current])];
       const effectiveCombo: KeyCombo = { modifiers: effectiveMods, key: pressed.key };
 
@@ -107,29 +168,23 @@ export const useHotkeyCapture = ({
 
       const steps = expectedSteps;
       if (!steps || steps.length === 0) {
+        e.preventDefault();
+        e.stopPropagation();
         onMismatch(pressed);
         return;
       }
 
       const expectedAtStep = steps[stepIndexRef.current];
       if (keyCombosMatch(effectiveCombo, expectedAtStep)) {
-        const isLast = stepIndexRef.current === steps.length - 1;
-        if (isLast) {
-          stepIndexRef.current = 0;
-          setChordStep(0);
-          lastMatchTime.current = now;
-          onMatch();
-        } else {
-          stepIndexRef.current += 1;
-          lastStepTimeRef.current = now;
-          setChordStep(stepIndexRef.current);
-        }
+        if (!hadStagedModifiers) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+        handleMatchedStep(now);
       } else {
-        // Mismatch — reset chord progress.
-        if (stepIndexRef.current > 0) {
-          stepIndexRef.current = 0;
-          setChordStep(0);
-        }
+        e.preventDefault();
+        e.stopPropagation();
+        resetChordProgress();
         onMismatch(pressed);
       }
     };
@@ -140,7 +195,7 @@ export const useHotkeyCapture = ({
       stagedRef.current = [];
       setStagedModifiers([]);
     };
-  }, [enabled, expectedSteps, onMatch, onMismatch]);
+  }, [enabled, expectedSteps, handleMatchedStep, onMismatch, resetChordProgress]);
 
   return { stagedModifiers, chordStep };
 };

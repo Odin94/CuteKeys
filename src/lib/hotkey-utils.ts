@@ -1,3 +1,4 @@
+import { parseKeyboardEvent } from "@tanstack/react-hotkeys";
 import type { KeyCombo, ModifierKey } from "@/types/hotkey";
 import { mapModifier, modifierLabel } from "./platform";
 
@@ -24,12 +25,13 @@ export function isBareModifier(e: KeyboardEvent): boolean {
 }
 
 export function eventToKeyCombo(e: KeyboardEvent): KeyCombo {
+  const parsed = parseKeyboardEvent(e);
   const modifiers: ModifierKey[] = [];
-  if (e.ctrlKey) modifiers.push("ctrl");
-  if (e.shiftKey) modifiers.push("shift");
-  if (e.altKey) modifiers.push("alt");
-  if (e.metaKey) modifiers.push("meta");
-  return normalizeKeyCombo({ modifiers, key: e.key.toLowerCase() });
+  if (parsed.ctrl) modifiers.push("ctrl");
+  if (parsed.shift) modifiers.push("shift");
+  if (parsed.alt) modifiers.push("alt");
+  if (parsed.meta) modifiers.push("meta");
+  return normalizeKeyCombo({ modifiers, key: parsed.key.toLowerCase() });
 }
 
 /** Compare a pressed KeyCombo against an expected KeyCombo from data.

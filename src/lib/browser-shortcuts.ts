@@ -28,5 +28,4 @@ export const isBrowserReserved = (combo: KeyCombo): boolean => {
 };
 
 /** True if any step in a chord is browser-reserved. */
-export const chordHasBrowserReserved = (steps: KeyCombo[]): boolean =>
-  steps.some(isBrowserReserved);
+export const chordHasBrowserReserved = (steps: KeyCombo[]): boolean => steps.some(isBrowserReserved);
