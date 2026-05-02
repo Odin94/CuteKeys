@@ -39,7 +39,9 @@ export const TrainingView = ({
   const hotkeys = app.sets
     .filter((s) => selectedSetIds.includes(s.id))
     .flatMap((s) =>
-      challenge ? applyOverridesToSet(s, overrides).hotkeys : getTrainableHotkeys(s, overrides, stats),
+      challenge
+        ? applyOverridesToSet(s, overrides).hotkeys
+        : getTrainableHotkeys(s, overrides, stats),
     );
 
   const {

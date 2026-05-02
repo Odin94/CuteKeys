@@ -141,10 +141,7 @@ export type ZedKeymapImportResult = {
 };
 
 /** Given a parsed keymap.json value, build overrides for Zed hotkeys that expose a `zedAction`. */
-export function buildZedOverrides(
-  app: AppDefinition,
-  parsed: unknown,
-): ZedKeymapImportResult {
+export function buildZedOverrides(app: AppDefinition, parsed: unknown): ZedKeymapImportResult {
   if (!Array.isArray(parsed)) {
     throw new Error("keymap.json must be a JSON array of binding entries");
   }

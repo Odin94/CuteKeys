@@ -2,11 +2,7 @@ import { useRef, useState } from "react";
 import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { AppDefinition, AppHotkeyOverrides } from "@/types/hotkey";
-import {
-  buildZedOverrides,
-  mergeOverrides,
-  parseZedKeymap,
-} from "@/lib/zed-keymap-import";
+import { buildZedOverrides, mergeOverrides, parseZedKeymap } from "@/lib/zed-keymap-import";
 
 type ZedKeymapImportButtonProps = {
   app: AppDefinition;

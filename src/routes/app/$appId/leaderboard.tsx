@@ -131,7 +131,8 @@ export const LeaderboardPage = () => {
                         ) : null}
                       </div>
                       <p className="text-xs text-[#8D6E63] dark:text-[#B0BEC5]">
-                        {Math.round(run.accuracy * 100)}% acc · {(run.avgResponseTimeMs / 1000).toFixed(2)}
+                        {Math.round(run.accuracy * 100)}% acc ·{" "}
+                        {(run.avgResponseTimeMs / 1000).toFixed(2)}
                         s avg · streak {run.bestStreak} · {formatDuration(run.durationMs)} ·{" "}
                         {formatDate(run.date)}
                       </p>
